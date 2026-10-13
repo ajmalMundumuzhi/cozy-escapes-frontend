@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Poppins", sans-serif;
+  --font-script: "Mr Dafoe", cursive;
+  --color-navy: #000033;
+  --color-ink: #1e2557;
+  --color-body: #2f4575;
+  --color-gold: #c9a961;
+  --color-gold-dark: #b89a5e;
+  --color-cream: #faf6f5;
+}
+
+body {
+  margin: 0;
+  font-weight: 300;
+  color: var(--color-body);
+  background: #fff;
+}
