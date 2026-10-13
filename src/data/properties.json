@@ -1,1 +1,8 @@
-[] 
+[
+  { "id": "441841", "title": "AccorView Luxury 1BR Suite | Pool • Gym • Parking", "image": "https://picsum.photos/seed/cozy-1/800/800", "rating": 4.7, "guests": 4, "bedrooms": 1, "bathrooms": 1, "amenities": ["Air conditioning", "Swimming pool", "Kitchen"], "bookUrl": "#" },
+  { "id": "446510", "title": "Airport & CBD Access | 3BR + 2 Parking", "image": "https://picsum.photos/seed/cozy-2/800/800", "rating": 4.8, "guests": 8, "bedrooms": 3, "bathrooms": 2, "amenities": ["Air conditioning", "Kitchen", "Washing Machine"], "bookUrl": "#" },
+  { "id": "448789", "title": "The Blue Sanctuary | Pool, Sauna & Free Parking", "image": "https://picsum.photos/seed/cozy-3/800/800", "rating": 4.4, "guests": 4, "bedrooms": 2, "bathrooms": 1, "amenities": ["Air conditioning", "Swimming pool", "Kitchen"], "bookUrl": "#" },
+  { "id": "451860", "title": "Harbour Lifestyle • Modern 1BR in Prime Spot", "image": "https://picsum.photos/seed/cozy-4/800/800", "rating": 4.5, "guests": 2, "bedrooms": 1, "bathrooms": 1, "amenities": ["Air conditioning", "Kitchen", "Washing Machine"], "bookUrl": "#" },
+  { "id": "460446", "title": "High-Rise Haven with Spectacular Skyline Views", "image": "https://picsum.photos/seed/cozy-5/800/800", "rating": 4.7, "guests": 2, "bedrooms": 1, "bathrooms": 1, "amenities": ["Air conditioning", "Kitchen", "Washing Machine"], "bookUrl": "#" },
+  { "id": "469072", "title": "Resort-Style 2BR Escape Pool, Gym, Sauna, Parking", "image": "https://picsum.photos/seed/cozy-6/800/800", "rating": 4.8, "guests": 7, "bedrooms": 2, "bathrooms": 2, "amenities": ["Air conditioning", "Swimming pool", "Kitchen"], "bookUrl": "#" }
+]
