@@ -1,1 +1,8 @@
-[] 
+[
+  { "title": "What does your management service include?", "text": "Our bespoke management service is designed to handle every detail with precision—from listing curation and guest communication to housekeeping and property care—ensuring your home is presented and maintained to the highest standard." },
+  { "title": "How do you ensure an exceptional guest experience?", "text": "We deliver a thoughtfully curated stay through meticulous preparation, elevated cleanliness standards, and attentive, responsive support—creating a seamless and memorable experience for every guest." },
+  { "title": "How are bookings managed?", "text": "We oversee the entire booking journey with a strategic approach, optimizing your property’s presence across leading platforms while managing all inquiries and reservations with professionalism and care." },
+  { "title": "Can I still enjoy my property personally?", "text": "Absolutely. Your property remains yours to enjoy at any time. We offer flexible scheduling, allowing you to reserve dates for personal use while we optimize availability around your preferences." },
+  { "title": "How is my property maintained?", "text": "Your property is cared for with the utmost attention. We coordinate premium housekeeping services, conduct regular inspections, and ensure any maintenance is handled promptly and discreetly." },
+  { "title": "How do I begin?", "text": "Simply connect with us, and we will guide you through a tailored onboarding experience. Our team will curate a management approach that aligns with your property and investment goals." }
+]
