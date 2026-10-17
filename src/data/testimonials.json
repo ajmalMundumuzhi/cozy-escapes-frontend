@@ -1,5 +1,38 @@
 [
-  { "name": "Stacy P.", "quote": "\"Absolutely stunning stay! The apartment was beautifully designed, spotless, and had breathtaking views. Everything from check-in to checkout was seamless. We’ll definitely be coming back.\"" },
-  { "name": "Michael C.", "quote": "“The location was perfect and the amenities exceeded our expectations. The space felt luxurious yet comfortable—exactly what we were looking for in a relaxing getaway.”" },
-  { "name": "Isabella G.", "quote": "“Exceptional service and a truly memorable experience. The property was even better than the photos, and the attention to detail made our stay feel special.”" }
+  {
+    "name": "Stacy P.",
+    "role": "Verified guest",
+    "image": "https://picsum.photos/seed/guest-1/700/900",
+    "quote": "\"Absolutely stunning stay! The apartment was beautifully designed, spotless, and had breathtaking views. Everything from check-in to checkout was seamless. We’ll definitely be coming back.\""
+  },
+  {
+    "name": "Michael C.",
+    "role": "Verified guest",
+    "image": "https://picsum.photos/seed/guest-2/700/900",
+    "quote": "“The location was perfect and the amenities exceeded our expectations. The space felt luxurious yet comfortable—exactly what we were looking for in a relaxing getaway.”"
+  },
+  {
+    "name": "Isabella G.",
+    "role": "Verified guest",
+    "image": "https://picsum.photos/seed/guest-3/700/900",
+    "quote": "“Exceptional service and a truly memorable experience. The property was even better than the photos, and the attention to detail made our stay feel special.”"
+  },
+  {
+    "name": "Guest Four",
+    "role": "Verified guest",
+    "image": "https://picsum.photos/seed/guest-4/700/900",
+    "quote": "“Placeholder review: replace with a real guest comment from the client.”"
+  },
+  {
+    "name": "Guest Five",
+    "role": "Verified guest",
+    "image": "https://picsum.photos/seed/guest-5/700/900",
+    "quote": "“Placeholder review: replace with a real guest comment from the client.”"
+  },
+  {
+    "name": "Guest Six",
+    "role": "Verified guest",
+    "image": "https://picsum.photos/seed/guest-6/700/900",
+    "quote": "“Placeholder review: replace with a real guest comment from the client.”"
+  }
 ]

@@ -37,7 +37,7 @@ export default function Header({ overlay = false }) {
         </button>
 
         <Link to="/" onClick={() => setOpen(false)} className="font-display text-xl italic md:text-2xl">
-          Resort booking
+          Avanta Living
         </Link>
 
         <div className="flex items-center justify-self-end">

@@ -12,7 +12,7 @@ export default function PartnerLogos() {
   return (
     <section className="py-16 md:py-24">
       <Container>
-        <h2 className="text-center font-script text-5xl text-ink md:text-[56px]">
+        <h2 className="text-center font-display font-medium tracking-tight text-5xl text-ink md:text-[48px]">
           Trusted By Industry Leaders
         </h2>
         <div className="mt-12 grid grid-cols-2 items-center justify-items-center gap-10 md:grid-cols-4">
