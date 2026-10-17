@@ -5,7 +5,7 @@ const links = [
   { label: 'Home', to: '/' },
   { label: 'Hotel Listings', to: '/accommodations' },
   { label: 'About Alvanta', to: '/about-alvanta' },
-  { label: 'Terms', to: '/terms-and-conditions' },
+  { label: 'Terms', to: '/terms' },
 ]
 
 const label = 'text-[11px] font-medium uppercase tracking-[0.18em]'

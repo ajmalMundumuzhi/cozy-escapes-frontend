@@ -7,13 +7,13 @@ export default function Footer() {
       <Container className="pb-6 pt-16 md:pt-20">
         <div className="grid gap-10 text-center md:grid-cols-3 md:text-left">
           <div className="flex justify-center">
-            <img src="/logo.png" alt="Cozy Escapes Property" className="h-32 w-auto" />
+            <img src="/logo.png" alt="Avanta Living Property" className="h-32 w-auto" />
           </div>
 
           <div>
             <h3 className="text-[18px] font-medium">Navigate</h3>
             <ul className="mt-5 text-[16px] font-light leading-6">
-              <li><Link to="/about-cozy-escapes">About Cozy Escapes</Link></li>
+              <li><Link to="/about-cozy-escapes">About Avanta Living</Link></li>
               <li><Link to="/accommodations">Hotel Listing</Link></li>
             </ul>
           </div>
@@ -28,7 +28,7 @@ export default function Footer() {
         </div>
 
         <p className="mt-14 text-center text-xs font-light text-white/70">
-          © 2026 Cozy Escapes. All rights reserved.
+          © 2026 Avanta Living. All rights reserved.
         </p>
       </Container>
     </footer>
