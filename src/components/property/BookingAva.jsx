@@ -1,7 +1,9 @@
-const INQUIRY_EMAIL = 'Hello.avantaliving@gmail.com'
+import { Link } from 'react-router-dom'
 
-export default function BookingAva({ title, rating, bookUrl }) {
-  const inquiry = `mailto:${INQUIRY_EMAIL}?subject=${encodeURIComponent(`Inquiry: ${title}`)}`
+export default function BookingAva({ id, rating, search = '' }) {
+  const base = `/accommodations/property/${id}`
+  const book = `${base}/book${search}`
+  const inquiry = `${base}/inquiry${search}`
 
   return (
     <>
@@ -16,18 +18,18 @@ export default function BookingAva({ title, rating, bookUrl }) {
         </p>
 
         <div className="mt-8 grid gap-3">
-          <a
-            href={bookUrl}
+          <Link
+            to={book}
             className="bg-gold-deep py-4 text-center text-[12px] font-medium uppercase tracking-[0.18em] text-white transition-colors hover:bg-navy"
           >
             Book Now
-          </a>
-          <a
-            href={inquiry}
+          </Link>
+          <Link
+            to={inquiry}
             className="border border-navy py-4 text-center text-[12px] font-medium uppercase tracking-[0.18em] text-navy transition-colors hover:bg-navy hover:text-white"
           >
             Send Inquiry
-          </a>
+          </Link>
         </div>
 
         <p className="mt-6 border-t border-gold/30 pt-5 text-center text-[14px] text-body">
@@ -47,18 +49,18 @@ export default function BookingAva({ title, rating, bookUrl }) {
           {rating}
         </div>
         <div className="flex gap-2">
-          <a
-            href={inquiry}
+          <Link
+            to={inquiry}
             className="border border-navy px-4 py-3 text-[12px] font-medium uppercase tracking-[0.15em] text-navy"
           >
             Inquiry
-          </a>
-          <a
-            href={bookUrl}
+          </Link>
+          <Link
+            to={book}
             className="bg-gold-deep px-6 py-3 text-[12px] font-medium uppercase tracking-[0.15em] text-white"
           >
             Book Now
-          </a>
+          </Link>
         </div>
       </div>
     </>

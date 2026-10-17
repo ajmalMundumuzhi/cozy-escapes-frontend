@@ -5,6 +5,8 @@ import AboutPage from '../pages/AboutPage'
 import TermsPage from '../pages/TermsPage'
 import ListingsPage from '../pages/ListingsPage'
 import PropertyDetailPage from '../pages/PropertyDetailPage'
+import InquiryPage from '../pages/InquiryPage'
+import BookingPage from '../pages/BookingPage'
 
 export default function AppRoutes() {
   return (
@@ -16,6 +18,9 @@ export default function AppRoutes() {
         <Route path='/terms' element={<TermsPage />} />
 
         <Route path='/accommodations/property/:id' element={<PropertyDetailPage />} />
+
+        <Route path='/accommodations/property/:id/inquiry' element={<InquiryPage />} />
+        <Route path='/accommodations/property/:id/book' element={<BookingPage />} />
         <Route path="*" element={<p className="px-4 py-24 text-center">Coming soon</p>} />
       </Route>
     </Routes>
