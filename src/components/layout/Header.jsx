@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 const links = [
   { label: 'Home', to: '/' },
   { label: 'Hotel Listings', to: '/accommodations' },
-  { label: 'About Cozy Escapes', to: '/about-cozy-escapes' },
+  { label: 'About Alvanta', to: '/about-alvanta' },
   { label: 'Terms', to: '/terms-and-conditions' },
 ]
 
