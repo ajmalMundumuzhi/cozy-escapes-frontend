@@ -1,5 +1,5 @@
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
 import Container from '../components/ui/Container'
 import Gallery from '../components/property/Gallery'
 import PropertyStats from '../components/property/PropertyStats'
@@ -9,8 +9,10 @@ import PropertyInfo from '../components/property/PropertyInfo'
 import BookingAva from '../components/property/BookingAva'
 import { useProperty } from '../hooks/useProperties'
 
+
 export default function PropertyDetailPage() {
   const { id } = useParams()
+  const { search } = useLocation()
   const property = useProperty(id)
 
   // Start at the top when arriving from the listings page
@@ -84,7 +86,7 @@ export default function PropertyDetailPage() {
           </div>
 
           {/* Right column */}
-          <BookingAva title={title} rating={rating} bookUrl={bookUrl} />
+          <BookingAva id={id} rating={rating} search={search} />
         </div>
       </Container>
     </section>

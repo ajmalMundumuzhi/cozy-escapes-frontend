@@ -40,12 +40,12 @@ function Details({ property }) {
       </ul>
 
       <div className="mt-6 flex flex-wrap gap-3">
-        <a
-          href={bookUrl}
-          className="bg-gold px-6 py-3 text-[12px] font-medium uppercase tracking-[0.18em] text-white transition-colors hover:bg-gold-dark"
-        >
-          Book Now
-        </a>
+        <Link
+            to={`/accommodations/property/${id}/book`}
+            className="flex-1 bg-gold-deep py-3 text-center text-[12px] font-medium uppercase tracking-[0.18em] text-white transition-colors hover:bg-navy"
+          >
+            Book Now
+          </Link>
         <Link
           to={`/accommodations/property/${id}`}
           className="border border-white/50 px-6 py-3 text-[12px] font-medium uppercase tracking-[0.18em] transition-colors hover:bg-white hover:text-navy"
