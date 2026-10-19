@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import Container from '../ui/Container'
@@ -7,7 +8,11 @@ import PaymentStep, { SecureNote } from './PaymentStep'
 import { useProperty } from '../../hooks/useProperties'
 import { parseISODate } from '../../utils/formatters'
 import { validateGuest } from '../../utils/validators'
-import { submitInquiry } from '../../services/api'
+import {
+  submitInquiry,
+  getAvailability,
+  getPriceQuote,
+} from '../../services/api'
 
 const MODES = {
   inquiry: { title: 'Inquiry', button: 'Send Inquiry', needsDates: false },
@@ -15,8 +20,28 @@ const MODES = {
 }
 
 const initialValues = {
-  firstName: '', lastName: '', email: '', dialCode: '+61', phone: '',
-  address: '', address2: '', city: '', zip: '', state: '', country: '', message: '',
+  firstName: '',
+  lastName: '',
+  email: '',
+  dialCode: '+61',
+  phone: '',
+  address: '',
+  address2: '',
+  city: '',
+  zip: '',
+  state: '',
+  country: '',
+  message: '',
+}
+
+function toApiDate(date) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return ''
+
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
 }
 
 export default function Reservation({ mode }) {
@@ -27,22 +52,116 @@ export default function Reservation({ mode }) {
 
   const [values, setValues] = useState(initialValues)
   const [errors, setErrors] = useState({})
-  // Dates and guests can arrive from the home-page search via the URL
+
   const [range, setRange] = useState(() => ({
     start: parseISODate(params.get('checkin')),
     end: parseISODate(params.get('checkout')),
   }))
+
   const [guests, setGuests] = useState(() =>
     Math.max(1, Math.min(Number(params.get('guests')) || 1, property?.guests ?? 1))
   )
+
   const [marketing, setMarketing] = useState(false)
-  const [stage, setStage] = useState('form') // form | payment | sent
+  const [stage, setStage] = useState('form')
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
+
+  const [availability, setAvailability] = useState(null)
+  const [quote, setQuote] = useState(null)
+  const [quoteLoading, setQuoteLoading] = useState(false)
+  const [quoteError, setQuoteError] = useState('')
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [stage, id])
+
+  useEffect(() => {
+    if (mode !== 'booking' || !range.start || !range.end) {
+      setAvailability(null)
+      setQuote(null)
+      setQuoteError('')
+      setQuoteLoading(false)
+      return
+    }
+
+    const checkin = toApiDate(range.start)
+    const checkout = toApiDate(range.end)
+
+    if (!checkin || !checkout || checkout <= checkin) {
+      setAvailability(null)
+      setQuote(null)
+      setQuoteError('Select a valid check-in and check-out date.')
+      setQuoteLoading(false)
+      return
+    }
+
+    let cancelled = false
+
+    async function loadQuote() {
+      setQuoteLoading(true)
+      setQuote(null)
+      setQuoteError('')
+      setAvailability(null)
+
+      try {
+        const availabilityResult = await getAvailability(
+          id,
+          checkin,
+          checkout,
+          guests
+        )
+
+        if (cancelled) return
+
+        const isAvailable = availabilityResult?.data?.available
+
+        if (isAvailable !== true) {
+          setAvailability(false)
+          setQuoteError(
+            'These dates are unavailable. Please select different dates.'
+          )
+          return
+        }
+
+        const quoteResult = await getPriceQuote(
+          id,
+          checkin,
+          checkout,
+          guests
+        )
+
+        if (cancelled) return
+
+        const receivedQuote = quoteResult?.data
+
+        if (!receivedQuote?.priceBreakdown) {
+          setAvailability(false)
+          setQuoteError('The server did not return a valid price quote.')
+          return
+        }
+
+        setAvailability(true)
+        setQuote(receivedQuote)
+      } catch (error) {
+        if (!cancelled) {
+          setAvailability(false)
+          setQuote(null)
+          setQuoteError(
+            error.message || 'Unable to check availability and pricing.'
+          )
+        }
+      } finally {
+        if (!cancelled) setQuoteLoading(false)
+      }
+    }
+
+    loadQuote()
+
+    return () => {
+      cancelled = true
+    }
+  }, [mode, id, range.start, range.end, guests])
 
   if (!property) {
     return (
@@ -63,39 +182,72 @@ export default function Reservation({ mode }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setValues((v) => ({ ...v, [name]: value }))
-    if (errors[name]) setErrors((er) => ({ ...er, [name]: undefined }))
+
+    setValues((current) => ({ ...current, [name]: value }))
+
+    if (errors[name]) {
+      setErrors((current) => ({ ...current, [name]: undefined }))
+    }
+
+    if (submitError) setSubmitError('')
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setSubmitError('')
 
     const errs = validateGuest(values)
+
     if (cfg.needsDates && !(range.start && range.end)) {
       errs.dates = 'Select your check-in and check-out dates'
     }
+
     setErrors(errs)
 
     const first = Object.keys(errs)[0]
+
     if (first) {
-      const el = document.getElementById(first === 'dates' ? 'trip-details' : `f-${first}`)
-      el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      if (first !== 'dates') el?.focus({ preventScroll: true })
+      const element = document.getElementById(
+        first === 'dates' ? 'trip-details' : `f-${first}`
+      )
+
+      element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+
+      if (first !== 'dates') {
+        element?.focus({ preventScroll: true })
+      }
+
       return
+    }
+
+    if (mode === 'booking') {
+      if (quoteLoading) {
+        setQuoteError('Please wait while we calculate your price.')
+        return
+      }
+
+      if (availability !== true || !quote?.priceBreakdown) {
+        setQuoteError(
+          'A valid quote for available dates is required to continue.'
+        )
+        return
+      }
     }
 
     const payload = {
       propertyId: id,
       guest: values,
-      checkin: range.start,
-      checkout: range.end,
+      checkin: range.start ? toApiDate(range.start) : null,
+      checkout: range.end ? toApiDate(range.end) : null,
       guests,
       marketing,
+      ...(mode === 'booking'
+        ? { priceBreakdown: quote.priceBreakdown }
+        : {}),
     }
 
     if (mode === 'inquiry') {
       setSubmitting(true)
-      setSubmitError('')
 
       try {
         await submitInquiry(payload)
@@ -108,23 +260,30 @@ export default function Reservation({ mode }) {
         setSubmitting(false)
       }
     } else {
+      // Payment and booking creation are not implemented yet.
       console.log('Booking payload (no payment provider yet):', payload)
       setStage('payment')
     }
   }
 
-  // Thank-you screen (inquiry)
   if (stage === 'sent') {
     return (
       <Container className="py-24 text-center md:py-32">
-        <p className="text-[12px] font-medium uppercase tracking-[0.3em] text-gold-deep">Inquiry</p>
+        <p className="text-[12px] font-medium uppercase tracking-[0.3em] text-gold-deep">
+          Inquiry
+        </p>
+
         <span className="mx-auto mt-6 block h-px w-16 bg-gold" />
+
         <h1 className="mt-8 font-display text-4xl font-medium tracking-tight text-ink md:text-5xl">
           Thank you, {values.firstName.trim()}
         </h1>
+
         <p className="mx-auto mt-6 max-w-[520px] text-[17px] leading-8 text-body">
-          We’ve noted your inquiry for {mainTitle.trim()} and will be in touch at {values.email.trim()}.
+          We’ve noted your inquiry for {mainTitle.trim()} and will be in touch
+          at {values.email.trim()}.
         </p>
+
         <div className="mt-10 flex flex-wrap justify-center gap-4">
           <Link
             to="/accommodations"
@@ -132,6 +291,7 @@ export default function Reservation({ mode }) {
           >
             Browse more stays
           </Link>
+
           <Link
             to="/"
             className="border border-navy px-8 py-3 text-[12px] font-medium uppercase tracking-[0.18em] text-navy transition-colors hover:bg-navy hover:text-white"
@@ -153,6 +313,7 @@ export default function Reservation({ mode }) {
         >
           ←
         </Link>
+
         <h1 className="font-display text-4xl font-medium tracking-tight text-ink md:text-5xl">
           {cfg.title}
         </h1>
@@ -190,19 +351,27 @@ export default function Reservation({ mode }) {
           <TripSummary
             property={property}
             range={range}
-            onRangeChange={(r) => {
-              setRange(r)
-              setErrors((er) => ({ ...er, dates: undefined }))
+            onRangeChange={(nextRange) => {
+              setRange(nextRange)
+              setErrors((current) => ({
+                ...current,
+                dates: undefined,
+              }))
             }}
             guests={guests}
             onGuestsChange={setGuests}
             marketing={marketing}
             onMarketingChange={setMarketing}
             submitLabel={cfg.button}
-            submitting={submitting}
+            submitting={submitting || quoteLoading}
             showSubmit={stage === 'form'}
             datesError={errors.dates}
+            pricingQuote={quote}
+            pricingLoading={quoteLoading}
+            pricingError={mode === 'booking' ? quoteError : ''}
+            availability={availability}
           />
+
           {mode === 'booking' && <SecureNote />}
         </div>
       </form>
