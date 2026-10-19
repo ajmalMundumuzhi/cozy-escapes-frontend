@@ -1,6 +1,9 @@
-// TODO: replace with fetch(`${import.meta.env.VITE_API_URL}/inquiries`, { method: 'POST', ... })
+
+import { apiRequest } from './http'
+
 export async function submitInquiry(payload) {
-  console.log('Inquiry payload (not sent anywhere yet):', payload)
-  await new Promise((resolve) => setTimeout(resolve, 600))
-  return { ok: true }
+  return apiRequest('/inquiries', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
 }

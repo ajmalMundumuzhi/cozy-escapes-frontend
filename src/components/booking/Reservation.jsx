@@ -38,6 +38,7 @@ export default function Reservation({ mode }) {
   const [marketing, setMarketing] = useState(false)
   const [stage, setStage] = useState('form') // form | payment | sent
   const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
@@ -94,9 +95,18 @@ export default function Reservation({ mode }) {
 
     if (mode === 'inquiry') {
       setSubmitting(true)
-      await submitInquiry(payload)
-      setSubmitting(false)
-      setStage('sent')
+      setSubmitError('')
+
+      try {
+        await submitInquiry(payload)
+        setStage('sent')
+      } catch (error) {
+        setSubmitError(
+          error.message || 'Unable to send your inquiry. Please try again.'
+        )
+      } finally {
+        setSubmitting(false)
+      }
     } else {
       console.log('Booking payload (no payment provider yet):', payload)
       setStage('payment')
@@ -157,7 +167,22 @@ export default function Reservation({ mode }) {
           {stage === 'payment' ? (
             <PaymentStep onBack={() => setStage('form')} />
           ) : (
-            <GuestDetailsForm values={values} errors={errors} onChange={handleChange} />
+            <>
+              <GuestDetailsForm
+                values={values}
+                errors={errors}
+                onChange={handleChange}
+              />
+
+              {submitError && (
+                <p
+                  role="alert"
+                  className="mt-4 rounded-md border border-red-300 bg-red-50 p-4 text-sm text-red-800"
+                >
+                  {submitError}
+                </p>
+              )}
+            </>
           )}
         </div>
 

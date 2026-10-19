@@ -42,22 +42,35 @@ export default function GuestDetailsForm({ values, errors, onChange }) {
         <Field label="Email" required htmlFor="f-email" error={errors.email}>
           <input {...bind('email')} type="email" autoComplete="email" placeholder="Email" />
         </Field>
+        
+        
         <Field label="Phone number" required htmlFor="f-phone" error={errors.phone}>
-          <div className="flex gap-2">
+          <div className="grid w-full grid-cols-[110px_minmax(0,1fr)] gap-2">
             <select
               name="dialCode"
               value={values.dialCode}
               onChange={onChange}
               aria-label="Country code"
-              className={`${inputClass(false)} w-[92px] shrink-0 px-3`}
+              className={`${inputClass(false)} !w-full min-w-0 px-3`}
             >
               {DIAL_CODES.map((c) => (
-                <option key={c} value={c}>{c}</option>
+                <option key={c} value={c}>
+                  {c}
+                </option>
               ))}
             </select>
-            <input {...bind('phone')} type="tel" autoComplete="tel-national" placeholder="Phone number" />
+
+            <input
+              {...bind('phone')}
+              type="tel"
+              autoComplete="tel-national"
+              placeholder="Phone number"
+              className={`${inputClass(errors.phone)} !w-full min-w-0`}
+            />
           </div>
         </Field>
+
+
 
         <Field label="Address" required htmlFor="f-address" error={errors.address} className="sm:col-span-2">
           <input {...bind('address')} autoComplete="address-line1" placeholder="Address" />
