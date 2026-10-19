@@ -1,22 +1,34 @@
 
 import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
+
 import Container from '../ui/Container'
 import GuestDetailsForm from './GuestDetailsForm'
 import TripSummary from './TripSummary'
 import PaymentStep, { SecureNote } from './PaymentStep'
+
 import { useProperty } from '../../hooks/useProperties'
 import { parseISODate } from '../../utils/formatters'
 import { validateGuest } from '../../utils/validators'
+
 import {
   submitInquiry,
   getAvailability,
   getPriceQuote,
+  createBooking,
 } from '../../services/api'
 
 const MODES = {
-  inquiry: { title: 'Inquiry', button: 'Send Inquiry', needsDates: false },
-  booking: { title: 'Book your stay', button: 'Continue to payment', needsDates: true },
+  inquiry: {
+    title: 'Inquiry',
+    button: 'Send Inquiry',
+    needsDates: false,
+  },
+  booking: {
+    title: 'Book your stay',
+    button: 'Continue to payment',
+    needsDates: true,
+  },
 }
 
 const initialValues = {
@@ -35,7 +47,9 @@ const initialValues = {
 }
 
 function toApiDate(date) {
-  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return ''
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+    return ''
+  }
 
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -45,7 +59,7 @@ function toApiDate(date) {
 }
 
 export default function Reservation({ mode }) {
-  const cfg = MODES[mode]
+  const cfg = MODES[mode] || MODES.inquiry
   const { id } = useParams()
   const [params] = useSearchParams()
   const property = useProperty(id)
@@ -59,7 +73,13 @@ export default function Reservation({ mode }) {
   }))
 
   const [guests, setGuests] = useState(() =>
-    Math.max(1, Math.min(Number(params.get('guests')) || 1, property?.guests ?? 1))
+    Math.max(
+      1,
+      Math.min(
+        Number(params.get('guests')) || 1,
+        property?.guests ?? 1
+      )
+    )
   )
 
   const [marketing, setMarketing] = useState(false)
@@ -72,10 +92,13 @@ export default function Reservation({ mode }) {
   const [quoteLoading, setQuoteLoading] = useState(false)
   const [quoteError, setQuoteError] = useState('')
 
+  const [createdBooking, setCreatedBooking] = useState(null)
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [stage, id])
 
+  // Check availability and get the server-calculated quote.
   useEffect(() => {
     if (mode !== 'booking' || !range.start || !range.end) {
       setAvailability(null)
@@ -112,15 +135,15 @@ export default function Reservation({ mode }) {
           guests
         )
 
-        if (cancelled) return
+        const available = availabilityResult?.data?.available
 
-        const isAvailable = availabilityResult?.data?.available
-
-        if (isAvailable !== true) {
-          setAvailability(false)
-          setQuoteError(
-            'These dates are unavailable. Please select different dates.'
-          )
+        if (available !== true) {
+          if (!cancelled) {
+            setAvailability(false)
+            setQuoteError(
+              'These dates are unavailable. Please select different dates.'
+            )
+          }
           return
         }
 
@@ -131,28 +154,28 @@ export default function Reservation({ mode }) {
           guests
         )
 
-        if (cancelled) return
+        if (!cancelled) {
+          setAvailability(true)
+          setQuote(quoteResult?.data ?? null)
 
-        const receivedQuote = quoteResult?.data
-
-        if (!receivedQuote?.priceBreakdown) {
-          setAvailability(false)
-          setQuoteError('The server did not return a valid price quote.')
-          return
+          if (!quoteResult?.data?.priceBreakdown) {
+            setQuoteError(
+              'The server did not return a valid price quote.'
+            )
+          }
         }
-
-        setAvailability(true)
-        setQuote(receivedQuote)
       } catch (error) {
         if (!cancelled) {
           setAvailability(false)
-          setQuote(null)
           setQuoteError(
-            error.message || 'Unable to check availability and pricing.'
+            error.message ||
+              'Unable to check availability and pricing.'
           )
         }
       } finally {
-        if (!cancelled) setQuoteLoading(false)
+        if (!cancelled) {
+          setQuoteLoading(false)
+        }
       }
     }
 
@@ -166,7 +189,10 @@ export default function Reservation({ mode }) {
   if (!property) {
     return (
       <Container className="py-32 text-center">
-        <h1 className="font-display text-4xl text-ink">Property not found</h1>
+        <h1 className="font-display text-4xl text-ink">
+          Property not found
+        </h1>
+
         <Link
           to="/accommodations"
           className="mt-8 inline-block bg-gold-deep px-8 py-3 text-[12px] font-medium uppercase tracking-[0.18em] text-white hover:bg-navy"
@@ -183,37 +209,47 @@ export default function Reservation({ mode }) {
   const handleChange = (e) => {
     const { name, value } = e.target
 
-    setValues((current) => ({ ...current, [name]: value }))
+    setValues((current) => ({
+      ...current,
+      [name]: value,
+    }))
 
     if (errors[name]) {
-      setErrors((current) => ({ ...current, [name]: undefined }))
+      setErrors((current) => ({
+        ...current,
+        [name]: undefined,
+      }))
     }
-
-    if (submitError) setSubmitError('')
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setSubmitError('')
 
-    const errs = validateGuest(values)
+    if (submitting) return
+
+    const validationErrors = validateGuest(values)
 
     if (cfg.needsDates && !(range.start && range.end)) {
-      errs.dates = 'Select your check-in and check-out dates'
+      validationErrors.dates =
+        'Select your check-in and check-out dates'
     }
 
-    setErrors(errs)
+    setErrors(validationErrors)
+    setSubmitError('')
 
-    const first = Object.keys(errs)[0]
+    const firstError = Object.keys(validationErrors)[0]
 
-    if (first) {
+    if (firstError) {
       const element = document.getElementById(
-        first === 'dates' ? 'trip-details' : `f-${first}`
+        firstError === 'dates' ? 'trip-details' : `f-${firstError}`
       )
 
-      element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      element?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      })
 
-      if (first !== 'dates') {
+      if (firstError !== 'dates') {
         element?.focus({ preventScroll: true })
       }
 
@@ -234,16 +270,18 @@ export default function Reservation({ mode }) {
       }
     }
 
+    const guest = {
+      ...values,
+      phone: `${values.dialCode || ''}${values.phone || ''}`.trim(),
+    }
+
     const payload = {
       propertyId: id,
-      guest: values,
+      guest,
       checkin: range.start ? toApiDate(range.start) : null,
       checkout: range.end ? toApiDate(range.end) : null,
       guests,
       marketing,
-      ...(mode === 'booking'
-        ? { priceBreakdown: quote.priceBreakdown }
-        : {}),
     }
 
     if (mode === 'inquiry') {
@@ -254,15 +292,38 @@ export default function Reservation({ mode }) {
         setStage('sent')
       } catch (error) {
         setSubmitError(
-          error.message || 'Unable to send your inquiry. Please try again.'
+          error.message ||
+            'Unable to send your inquiry. Please try again.'
         )
       } finally {
         setSubmitting(false)
       }
-    } else {
-      // Payment and booking creation are not implemented yet.
-      console.log('Booking payload (no payment provider yet):', payload)
+
+      return
+    }
+
+    // Create a pending booking hold on the backend.
+    setSubmitting(true)
+
+    try {
+      const result = await createBooking(payload)
+      const booking = result?.data
+
+      if (!booking?.bookingId) {
+        throw new Error(
+          'The server did not return a booking ID. Please check your booking.'
+        )
+      }
+
+      setCreatedBooking(booking)
       setStage('payment')
+    } catch (error) {
+      setSubmitError(
+        error.message ||
+          'Unable to create your booking. Please try again.'
+      )
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -280,8 +341,8 @@ export default function Reservation({ mode }) {
         </h1>
 
         <p className="mx-auto mt-6 max-w-[520px] text-[17px] leading-8 text-body">
-          We’ve noted your inquiry for {mainTitle.trim()} and will be in touch
-          at {values.email.trim()}.
+          We’ve noted your inquiry for {mainTitle.trim()} and will be in
+          touch at {values.email.trim()}.
         </p>
 
         <div className="mt-10 flex flex-wrap justify-center gap-4">
@@ -326,7 +387,10 @@ export default function Reservation({ mode }) {
       >
         <div className="min-w-0">
           {stage === 'payment' ? (
-            <PaymentStep onBack={() => setStage('form')} />
+            <PaymentStep
+              booking={createdBooking}
+              onBack={() => setStage('form')}
+            />
           ) : (
             <>
               <GuestDetailsForm
@@ -363,7 +427,7 @@ export default function Reservation({ mode }) {
             marketing={marketing}
             onMarketingChange={setMarketing}
             submitLabel={cfg.button}
-            submitting={submitting || quoteLoading}
+            submitting={submitting}
             showSubmit={stage === 'form'}
             datesError={errors.dates}
             pricingQuote={quote}

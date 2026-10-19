@@ -7,6 +7,8 @@ import ListingsPage from '../pages/ListingsPage'
 import PropertyDetailPage from '../pages/PropertyDetailPage'
 import InquiryPage from '../pages/InquiryPage'
 import BookingPage from '../pages/BookingPage'
+import PaymentSuccess from '../pages/PaymentSuccess'
+import PaymentCancelled from '../pages/PaymentCancelled'
 
 export default function AppRoutes() {
   return (
@@ -21,7 +23,10 @@ export default function AppRoutes() {
 
         <Route path='/accommodations/property/:id/inquiry' element={<InquiryPage />} />
         <Route path='/accommodations/property/:id/book' element={<BookingPage />} />
-        <Route path="*" element={<p className="px-4 py-24 text-center">Coming soon</p>} />
+
+        <Route path='/payment/success' element={<PaymentSuccess />} />
+        <Route path='/payment/cancelled' element={<PaymentCancelled />} />
+        
       </Route>
     </Routes>
   )

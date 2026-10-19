@@ -31,3 +31,23 @@ export async function getPriceQuote(propertyId, checkin, checkout, guests) {
     `/pricing/${encodeURIComponent(propertyId)}/quote?${query}`
   )
 }
+
+export async function createBooking(payload) {
+  return apiRequest('/bookings', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export async function createCheckoutSession(bookingId) {
+  return apiRequest('/payments/checkout-session', {
+    method: 'POST',
+    body: JSON.stringify({ bookingId }),
+  })
+}
+
+export async function getCheckoutStatus(sessionId) {
+  return apiRequest(
+    `/payments/session/${encodeURIComponent(sessionId)}`
+  )
+}
