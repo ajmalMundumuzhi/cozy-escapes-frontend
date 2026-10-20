@@ -107,6 +107,30 @@ export const adminApi = {
         method: "DELETE",
     }),
 
+    
+    inquiries: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return request(`/admin/inquiries${query ? `?${query}` : ""}`);
+    },
+
+    inquiry: (id) => request(`/admin/inquiries/${id}`),
+
+    updateInquiry: (id, data) =>
+    request(`/admin/inquiries/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+    }),
+    
+    settings: () => request("/admin/settings"),
+
+    updateSettings: (data) =>
+    request("/admin/settings", {
+        method: "PATCH",
+        body: JSON.stringify(data),
+    }),
+
+
+
 };
 
 export default adminApi;
