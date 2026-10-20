@@ -51,3 +51,12 @@ export async function getCheckoutStatus(sessionId) {
     `/payments/session/${encodeURIComponent(sessionId)}`
   )
 }
+export async function submitContact(payload) {
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/contact`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) throw new Error('Could not send message')
+  return res.json()
+}

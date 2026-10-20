@@ -20,6 +20,7 @@ import AdminAvailability from '../pages/admin/AdminAvailability'
 import AdminPricing from '../pages/admin/AdminPricing'
 import AdminInquiries from '../pages/admin/AdminInquiries'
 import AdminSettings from '../pages/admin/AdminSetting'
+import ContactPage from '../pages/ContactPage'
 
 export default function AppRoutes() {
   return (
@@ -29,6 +30,7 @@ export default function AppRoutes() {
         <Route path="/accommodations" element={<ListingsPage />} />
         <Route path="/about-alvanta" element={<AboutPage />} />
         <Route path="/terms" element={<TermsPage />} />
+        <Route path='/contact' element={<ContactPage />} />
         <Route
           path="/accommodations/property/:id"
           element={<PropertyDetailPage />}

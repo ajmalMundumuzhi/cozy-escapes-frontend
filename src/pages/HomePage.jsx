@@ -9,9 +9,9 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <PartnerLogos />
-      <ManagementBanner />
       <FeaturedProperties/>
+      {/* <PartnerLogos /> */}
+      <ManagementBanner />
       <Testimonials />
       <ServicesFaq />
     </>
