@@ -47,6 +47,37 @@ export const adminApi = {
   me: () => request("/admin/me"),
 
   dashboard: () => request("/admin/dashboard"),
+  
+  properties: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return request(`/admin/properties${query ? `?${query}` : ""}`);
+  },
+
+  property: (id) => request(`/admin/properties/${id}`),
+
+  createProperty: (data) =>
+    request("/admin/properties", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  updateProperty: (id, data) =>
+    request(`/admin/properties/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
+
+  toggleProperty: (id, isActive) =>
+    request(`/admin/properties/${id}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ isActive }),
+    }),
+
+  deleteProperty: (id) =>
+    request(`/admin/properties/${id}`, {
+      method: "DELETE",
+    }),
+
 };
 
 export default adminApi;

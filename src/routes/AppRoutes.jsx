@@ -13,6 +13,8 @@ import PaymentCancelled from '../pages/PaymentCancelled'
 import AdminProtectedRoute from '../components/admin/AdminProtectedRoute'
 import AdminLogin from '../pages/admin/AdminLogin'
 import AdminDashboard from '../pages/admin/AdminDashboard'
+import AdminProperties from '../pages/admin/AdminProperties'
+import AdminPropertyForm from '../pages/admin/AdminPropertyForm'
 
 export default function AppRoutes() {
   return (
@@ -46,6 +48,11 @@ export default function AppRoutes() {
           element={<Navigate to="/admin/dashboard" replace />}
         />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+        <Route path='/admin/properties' element={<AdminProperties />} />
+        <Route path='/admin/properties/new' element={<AdminPropertyForm />} />
+        <Route path='/admin/properties/:id/edit' element={<AdminPropertyForm />} />
+        
       </Route>
     </Routes>
   )
