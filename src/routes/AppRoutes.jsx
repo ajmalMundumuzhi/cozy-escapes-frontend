@@ -16,6 +16,8 @@ import AdminDashboard from '../pages/admin/AdminDashboard'
 import AdminProperties from '../pages/admin/AdminProperties'
 import AdminPropertyForm from '../pages/admin/AdminPropertyForm'
 import AdminBookings from '../pages/admin/AdminBooking'
+import AdminAvailability from '../pages/admin/AdminAvailability'
+import AdminPricing from '../pages/admin/AdminPricing'
 
 export default function AppRoutes() {
   return (
@@ -55,6 +57,9 @@ export default function AppRoutes() {
         <Route path='/admin/properties/:id/edit' element={<AdminPropertyForm />} />
 
         <Route path='/admin/bookings' element={<AdminBookings />} />
+
+        <Route path='/admin/availability' element={<AdminAvailability />} />
+        <Route path='/admin/pricing' element={<AdminPricing />} />
       </Route>
     </Routes>
   )

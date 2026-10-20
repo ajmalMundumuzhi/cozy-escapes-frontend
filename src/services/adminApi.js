@@ -90,7 +90,22 @@ export const adminApi = {
         method: "PATCH",
         body: JSON.stringify({ status }),
     }),
+    
+    availability: (params) => {
+    const query = new URLSearchParams(params).toString();
+    return request(`/admin/availability?${query}`);
+    },
 
+    createBlock: (data) =>
+    request("/admin/availability/blocks", {
+        method: "POST",
+        body: JSON.stringify(data),
+    }),
+
+    deleteBlock: (id) =>
+    request(`/admin/availability/blocks/${id}`, {
+        method: "DELETE",
+    }),
 
 };
 
