@@ -12,22 +12,31 @@ export const setAdminToken = (token) =>
 
 export const clearAdminToken = () => sessionStorage.removeItem(TOKEN_KEY);
 
+
+
 async function request(path, options = {}) {
   const token = getAdminToken();
+  const isFormData = options.body instanceof FormData;
+
+  const headers = {
+    ...(!isFormData && options.body
+      ? { "Content-Type": "application/json" }
+      : {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...options.headers,
+  };
 
   const response = await fetch(`${API_URL}${path}`, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
-    },
+    headers,
   });
 
   const result = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    if (response.status === 401 && token) clearAdminToken();
+    if (response.status === 401 && token) {
+      clearAdminToken();
+    }
 
     throw new Error(
       result.error?.message || result.message || "Request failed."
@@ -36,6 +45,8 @@ async function request(path, options = {}) {
 
   return result.data ?? result;
 }
+
+
 
 export const adminApi = {
   login: (email, password) =>
@@ -127,6 +138,12 @@ export const adminApi = {
     request("/admin/settings", {
         method: "PATCH",
         body: JSON.stringify(data),
+    }),
+    
+    uploadImage: (formData) =>
+    request("/admin/properties/upload-image", {
+        method: "POST",
+        body: formData,
     }),
 
 

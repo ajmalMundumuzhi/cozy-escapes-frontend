@@ -1,9 +1,7 @@
-
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import adminApi from "../../services/adminApi";
-
 const initialForm = {
   title: "",
   location: "",
@@ -46,12 +44,9 @@ const initialForm = {
   sortOrder: 0,
   pricingConfigured: false,
 };
-
 const inputClass =
   "w-full min-w-0 rounded-lg border border-stone-300 px-3 py-2.5 outline-none focus:border-stone-700";
-
 const labelClass = "mb-1.5 block text-sm font-medium text-stone-700";
-
 function Field({ label, children }) {
   return (
     <div className="min-w-0">
@@ -60,7 +55,6 @@ function Field({ label, children }) {
     </div>
   );
 }
-
 function Section({ title, children }) {
   return (
     <section className="space-y-5 border-b border-stone-200 pb-7">
@@ -71,10 +65,8 @@ function Section({ title, children }) {
     </section>
   );
 }
-
 function ListEditor({ title, items, onChange, placeholder = "Enter value" }) {
   const values = items?.length ? items : [""];
-
   return (
     <div className="space-y-2 sm:col-span-2 xl:col-span-3">
       <div className="flex items-center justify-between gap-3">
@@ -87,7 +79,6 @@ function ListEditor({ title, items, onChange, placeholder = "Enter value" }) {
           + Add
         </button>
       </div>
-
       {values.map((value, index) => (
         <div key={index} className="flex min-w-0 gap-2">
           <input
@@ -113,27 +104,21 @@ function ListEditor({ title, items, onChange, placeholder = "Enter value" }) {
     </div>
   );
 }
-
 export default function AdminPropertyForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const editing = Boolean(id);
-
   const [form, setForm] = useState(initialForm);
   const [propertyId, setPropertyId] = useState("");
   const [loading, setLoading] = useState(editing);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-
   useEffect(() => {
     if (!editing) return;
-
     let active = true;
-
     adminApi.property(id)
       .then(({ property }) => {
         if (!active) return;
-
         setPropertyId(property.propertyId || property.id || "");
         setForm({
           ...initialForm,
@@ -161,21 +146,84 @@ export default function AdminPropertyForm() {
       .finally(() => {
         if (active) setLoading(false);
       });
-
     return () => { active = false; };
   }, [editing, id]);
-
   function setValue(name, value) {
     setForm((current) => ({ ...current, [name]: value }));
   }
-
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  async function handleImageSelection(event) {
+    const files = Array.from(event.target.files || []);
+    event.target.value = "";
+    if (!files.length) return;
+    const validFiles = files.filter(
+      (file) => file.type.startsWith("image/") && file.size <= 10 * 1024 * 1024
+    );
+    if (validFiles.length !== files.length) {
+      setUploadError("Some files were skipped. Select image files smaller than 10 MB each.");
+    } else {
+      setUploadError("");
+    }
+    if (!validFiles.length) return;
+    setUploadingImages(true);
+    try {
+      const uploadedImages = [];
+      // Sequential uploads preserve the order in which files were selected.
+      for (const file of validFiles) {
+        const formData = new FormData();
+        formData.append("image", file);
+        const response = await adminApi.uploadImage(formData);
+        const result = response?.data?.data ?? response?.data ?? response;
+        const uploaded = result?.data ?? result;
+        if (!uploaded?.url) throw new Error(`Upload failed for ${file.name}`);
+        uploadedImages.push({
+          url: uploaded.url,
+          publicId: uploaded.publicId || null,
+          alt: file.name.replace(/\.[^/.]+$/, ""),
+          order: 0,
+        });
+      }
+      setForm((current) => {
+        const images = [...(current.images || []), ...uploadedImages];
+        return {
+          ...current,
+          images: images.map((image, order) => ({ ...image, order })),
+        };
+      });
+      setUploadError("");
+    } catch (err) {
+      setUploadError(err.message || "Image upload failed. Please try again.");
+    } finally {
+      setUploadingImages(false);
+    }
+  }
+  function removeImage(indexToRemove) {
+    setForm((current) => ({
+      ...current,
+      images: current.images
+        .filter((_, index) => index !== indexToRemove)
+        .map((image, order) => ({ ...image, order })),
+    }));
+  }
+  function moveImage(index, direction) {
+    setForm((current) => {
+      const images = [...current.images];
+      const target = index + direction;
+      if (target < 0 || target >= images.length) return current;
+      [images[index], images[target]] = [images[target], images[index]];
+      return {
+        ...current,
+        images: images.map((image, order) => ({ ...image, order })),
+      };
+    });
+  }
   function setPricing(name, value) {
     setForm((current) => ({
       ...current,
       pricing: { ...current.pricing, [name]: value },
     }));
   }
-
   function setPolicy(name, value) {
     setForm((current) => ({
       ...current,
@@ -185,32 +233,26 @@ export default function AdminPropertyForm() {
       },
     }));
   }
-
   function setArrayItem(arrayName, index, key, value) {
     const items = [...form[arrayName]];
     items[index] = { ...items[index], [key]: value };
     setValue(arrayName, items);
   }
-
   function setPricingArray(arrayName, index, key, value) {
     const items = [...form.pricing[arrayName]];
     items[index] = { ...items[index], [key]: value };
     setPricing(arrayName, items);
   }
-
   function addPricingItem(arrayName, item) {
     setPricing(arrayName, [...form.pricing[arrayName], item]);
   }
-
   async function handleSubmit(event) {
     event.preventDefault();
     setError("");
-
     if (!form.title.trim()) {
       setError("Property title is required.");
       return;
     }
-
     if (
       !Number.isFinite(Number(form.guests)) || Number(form.guests) < 1 ||
       !Number.isFinite(Number(form.bedrooms)) || Number(form.bedrooms) < 0 ||
@@ -219,7 +261,6 @@ export default function AdminPropertyForm() {
       setError("Enter valid guest, bedroom and bathroom counts.");
       return;
     }
-
     if (
       form.pricing.nightlyRate !== "" &&
       (!Number.isFinite(Number(form.pricing.nightlyRate)) ||
@@ -228,7 +269,6 @@ export default function AdminPropertyForm() {
       setError("Nightly rate must be zero or greater.");
       return;
     }
-
     const payload = {
       ...form,
       title: form.title.trim(),
@@ -273,9 +313,7 @@ export default function AdminPropertyForm() {
         })),
       },
     };
-
     setSaving(true);
-
     try {
       if (editing) {
         await adminApi.updateProperty(id, payload);
@@ -289,34 +327,28 @@ export default function AdminPropertyForm() {
       setSaving(false);
     }
   }
-
   if (loading) {
     return <div className="p-10">Loading property...</div>;
   }
-
   return (
     <div className="flex min-h-screen bg-stone-100">
       <AdminSidebar />
-
       <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-10">
         <div className="mx-auto max-w-6xl">
           <Link to="/admin/properties" className="text-sm text-stone-600 hover:underline">
             ← Back to properties
           </Link>
-
           <h1 className="mt-4 text-2xl font-bold sm:text-3xl">
             {editing ? "Edit property" : "Add property"}
           </h1>
           <p className="mt-2 mb-8 text-stone-600">
             Configure property information, images, pricing and policies.
           </p>
-
           {error && (
             <div role="alert" className="mb-6 rounded-lg bg-red-50 p-4 text-sm text-red-700">
               {error}
             </div>
           )}
-
           <form onSubmit={handleSubmit} className="space-y-8 rounded-xl border bg-white p-4 sm:p-6 lg:p-8">
             <Section title="Basic information">
               {editing && (
@@ -324,51 +356,41 @@ export default function AdminPropertyForm() {
                   <input className={`${inputClass} bg-stone-100`} value={propertyId} readOnly />
                 </Field>
               )}
-
               <Field label="Property title">
                 <input className={inputClass} required value={form.title}
                   onChange={(e) => setValue("title", e.target.value)} />
               </Field>
-
               <Field label="Location / area">
                 <input className={inputClass} value={form.location}
                   onChange={(e) => setValue("location", e.target.value)} />
               </Field>
-
               <Field label="Address">
                 <input className={inputClass} value={form.address}
                   onChange={(e) => setValue("address", e.target.value)} />
               </Field>
-
               <Field label="City">
                 <input className={inputClass} value={form.city}
                   onChange={(e) => setValue("city", e.target.value)} />
               </Field>
-
               <Field label="State">
                 <input className={inputClass} value={form.state}
                   onChange={(e) => setValue("state", e.target.value)} />
               </Field>
-
               <Field label="Country">
                 <input className={inputClass} value={form.country}
                   onChange={(e) => setValue("country", e.target.value)} />
               </Field>
-
               <Field label="Timezone">
                 <input className={inputClass} value={form.timezone}
                   onChange={(e) => setValue("timezone", e.target.value)} />
               </Field>
-
               <Field label="Sort order">
                 <input type="number" className={inputClass} value={form.sortOrder}
                   onChange={(e) => setValue("sortOrder", e.target.value)} />
               </Field>
-
               <ListEditor title="Description paragraphs" items={form.description}
                 onChange={(v) => setValue("description", v)} placeholder="Write a description..." />
             </Section>
-
             <Section title="Capacity and details">
               {[
                 ["guests", "Maximum guests", 1],
@@ -383,13 +405,10 @@ export default function AdminPropertyForm() {
                     onChange={(e) => setValue(name, e.target.value)} />
                 </Field>
               ))}
-
               <ListEditor title="Amenities" items={form.amenities}
                 onChange={(v) => setValue("amenities", v)} placeholder="e.g. Wi-Fi" />
-
               <ListEditor title="House rules" items={form.houseRules}
                 onChange={(v) => setValue("houseRules", v)} placeholder="Enter a house rule" />
-
               <div className="sm:col-span-2 xl:col-span-3 space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="font-medium">Amenity groups</h3>
@@ -414,44 +433,69 @@ export default function AdminPropertyForm() {
                 ))}
               </div>
             </Section>
-
             <Section title="Property images">
-              <div className="sm:col-span-2 xl:col-span-3 space-y-3">
-                <div className="flex items-center justify-between">
+              <div className="sm:col-span-2 xl:col-span-3 space-y-4">
+                <div>
                   <h3 className="font-medium">Image gallery</h3>
-                  <button type="button"
-                    onClick={() => setValue("images", [...form.images, { url: "", publicId: null, alt: "", order: form.images.length }])}
-                    className="text-sm font-semibold text-blue-700">+ Add image</button>
+                  <p className="mt-1 text-sm text-stone-500">
+                    Select multiple images. The first image is the primary image. Use the arrows to change the order.
+                  </p>
                 </div>
-
-                {form.images.map((image, i) => (
-                  <div key={i} className="grid gap-3 rounded-lg border p-3 sm:grid-cols-2">
-                    <Field label="Image URL">
-                      <input className={inputClass} value={image.url}
-                        onChange={(e) => setArrayItem("images", i, "url", e.target.value)}
-                        placeholder="https://..." />
-                    </Field>
-                    <Field label="Alt text">
-                      <input className={inputClass} value={image.alt || ""}
-                        onChange={(e) => setArrayItem("images", i, "alt", e.target.value)} />
-                    </Field>
-                    <Field label="Cloudinary public ID (optional)">
-                      <input className={inputClass} value={image.publicId || ""}
-                        onChange={(e) => setArrayItem("images", i, "publicId", e.target.value || null)} />
-                    </Field>
-                    <Field label="Display order">
-                      <input type="number" min="0" className={inputClass} value={image.order ?? i}
-                        onChange={(e) => setArrayItem("images", i, "order", Number(e.target.value))} />
-                    </Field>
-                    <button type="button" className="text-left text-sm text-red-600"
-                      onClick={() => setValue("images", form.images.filter((_, j) => i !== j))}>
-                      Remove image
-                    </button>
+                <label className={`inline-flex cursor-pointer items-center rounded-lg bg-stone-900 px-5 py-3 text-sm font-semibold text-white hover:bg-stone-700 ${uploadingImages ? "cursor-wait opacity-60" : ""}`}>
+                  {uploadingImages ? "Uploading images..." : "Choose images"}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    disabled={uploadingImages}
+                    onChange={handleImageSelection}
+                    className="hidden"
+                  />
+                </label>
+                {uploadError && (
+                  <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+                    {uploadError}
+                  </p>
+                )}
+                {form.images.length === 0 ? (
+                  <div className="rounded-lg border border-dashed border-stone-300 p-8 text-center text-sm text-stone-500">
+                    No images uploaded yet.
                   </div>
-                ))}
+                ) : (
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
+                    {form.images.map((image, i) => (
+                      <div key={image.publicId || `${image.url}-${i}`} className="overflow-hidden rounded-lg border border-stone-200 bg-white">
+                        <img src={image.url} alt={image.alt || `Property image ${i + 1}`} className="h-36 w-full object-cover" />
+                        <div className="space-y-3 p-3">
+                          <p className="truncate text-xs font-medium text-stone-600">
+                            {i === 0 ? "Primary image" : `Image ${i + 1}`}
+                          </p>
+                          <label className="block text-xs text-stone-600">
+                            Alt text
+                            <input
+                              className={`${inputClass} mt-1 text-sm`}
+                              value={image.alt || ""}
+                              onChange={(e) => setArrayItem("images", i, "alt", e.target.value)}
+                              maxLength={200}
+                            />
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <button type="button" disabled={i === 0} onClick={() => moveImage(i, -1)}
+                              aria-label={`Move image ${i + 1} earlier`}
+                              className="rounded border px-3 py-1.5 text-sm disabled:cursor-not-allowed disabled:opacity-30">←</button>
+                            <button type="button" disabled={i === form.images.length - 1} onClick={() => moveImage(i, 1)}
+                              aria-label={`Move image ${i + 1} later`}
+                              className="rounded border px-3 py-1.5 text-sm disabled:cursor-not-allowed disabled:opacity-30">→</button>
+                            <button type="button" onClick={() => removeImage(i)}
+                              className="ml-auto text-xs font-medium text-red-600 hover:text-red-800">Remove</button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </Section>
-
             <Section title="Base pricing">
               <Field label="Nightly rate">
                 <input type="number" min="0" step="0.01" className={inputClass}
@@ -479,7 +523,6 @@ export default function AdminPropertyForm() {
                   onChange={(e) => setPricing("pricingNotes", e.target.value)} />
               </Field>
             </Section>
-
             <Section title="Weekend rates">
               <div className="sm:col-span-2 xl:col-span-3 space-y-3">
                 <button type="button" className="text-sm font-semibold text-blue-700"
@@ -507,7 +550,6 @@ export default function AdminPropertyForm() {
                 ))}
               </div>
             </Section>
-
             <Section title="Seasonal rates">
               <div className="sm:col-span-2 xl:col-span-3 space-y-4">
                 <button type="button" className="text-sm font-semibold text-blue-700"
@@ -540,7 +582,6 @@ export default function AdminPropertyForm() {
                 ))}
               </div>
             </Section>
-
             <Section title="Additional fees">
               <div className="sm:col-span-2 xl:col-span-3 space-y-4">
                 <button type="button" className="text-sm font-semibold text-blue-700"
@@ -578,7 +619,6 @@ export default function AdminPropertyForm() {
                 ))}
               </div>
             </Section>
-
             <Section title="Taxes">
               <div className="sm:col-span-2 xl:col-span-3 space-y-4">
                 <button type="button" className="text-sm font-semibold text-blue-700"
@@ -612,7 +652,6 @@ export default function AdminPropertyForm() {
                 ))}
               </div>
             </Section>
-
             <Section title="Cancellation policy">
               <div className="sm:col-span-2 xl:col-span-3 space-y-4">
                 <button type="button" className="text-sm font-semibold text-blue-700"
@@ -649,7 +688,6 @@ export default function AdminPropertyForm() {
                 </Field>
               </div>
             </Section>
-
             <Section title="Check-in and check-out">
               <Field label="Check-in time">
                 <input type="time" className={inputClass} value={form.checkInTime}
@@ -660,7 +698,6 @@ export default function AdminPropertyForm() {
                   onChange={(e) => setValue("checkOutTime", e.target.value)} />
               </Field>
             </Section>
-
             <Section title="Listing settings">
               {[
                 ["isActive", "Active listing"],
@@ -675,7 +712,6 @@ export default function AdminPropertyForm() {
                 </label>
               ))}
             </Section>
-
             <div className="flex flex-wrap gap-3">
               <button type="submit" disabled={saving}
                 className="rounded-lg bg-stone-900 px-6 py-3 font-semibold text-white hover:bg-stone-700 disabled:opacity-50">
