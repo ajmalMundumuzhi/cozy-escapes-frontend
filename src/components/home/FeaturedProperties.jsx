@@ -18,7 +18,11 @@ function Star() {
 
 // All the property data, shown on the selected card
 function Details({ property }) {
-  const { id, title, rating, amenities, bookUrl } = property
+  const { id, title, rating, amenities } = property
+  const shown = amenities.slice(0, 3)
+  const more = amenities.length - shown.length
+
+  const chip = 'max-w-full truncate rounded-full border border-white/40 px-3 py-1 text-[12px]'
 
   return (
     <div className="absolute inset-x-0 bottom-0 p-6 text-white md:p-8">
@@ -27,28 +31,40 @@ function Details({ property }) {
         <span>{rating}</span>
       </div>
 
-      <h3 className="mt-3 font-display text-2xl font-medium leading-snug md:text-3xl">{title}</h3>
+      <h3 className="mt-3 line-clamp-3 font-display text-2xl font-medium leading-snug md:text-3xl">
+        {title}
+      </h3>
 
       <p className="mt-3 text-[15px] text-white/80">{formatStats(property)}</p>
 
       <ul className="mt-4 flex flex-wrap gap-2">
-        {amenities.map((a) => (
-          <li key={a} className="rounded-full border border-white/40 px-3 py-1 text-[12px]">
+        {shown.map((a) => (
+          <li key={a} className={chip}>
             {a}
           </li>
         ))}
+        {more > 0 && (
+          <li>
+            <Link
+              to={`/accommodations/property/${id}`}
+              className="block rounded-full border border-gold px-3 py-1 text-[12px] text-gold transition-colors hover:bg-gold hover:text-navy"
+            >
+              +{more} more
+            </Link>
+          </li>
+        )}
       </ul>
 
-      <div className="mt-6 flex flex-wrap gap-3">
+      <div className="mt-6 flex gap-3">
         <Link
-            to={`/accommodations/property/${id}/book`}
-            className="flex-1 bg-gold-deep py-3 text-center text-[12px] font-medium uppercase tracking-[0.18em] text-white transition-colors hover:bg-navy"
-          >
-            Book Now
-          </Link>
+          to={`/accommodations/property/${id}/book`}
+          className="flex-1 whitespace-nowrap bg-gold-deep px-4 py-3 text-center text-[12px] font-medium uppercase tracking-[0.14em] text-white transition-colors hover:bg-navy"
+        >
+          Book Now
+        </Link>
         <Link
           to={`/accommodations/property/${id}`}
-          className="border border-white/50 px-6 py-3 text-[12px] font-medium uppercase tracking-[0.18em] transition-colors hover:bg-white hover:text-navy"
+          className="flex-1 whitespace-nowrap border border-white/50 px-4 py-3 text-center text-[12px] font-medium uppercase tracking-[0.14em] transition-colors hover:bg-white hover:text-navy"
         >
           View Details
         </Link>
