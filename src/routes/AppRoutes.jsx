@@ -28,7 +28,7 @@ export default function AppRoutes() {
       <Route element={<Layout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/accommodations" element={<ListingsPage />} />
-        <Route path="/about-alvanta" element={<AboutPage />} />
+        <Route path="/about-avanta" element={<AboutPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path='/contact' element={<ContactPage />} />
         <Route

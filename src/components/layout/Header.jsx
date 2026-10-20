@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom'
 const links = [
   { label: 'Home', to: '/' },
   { label: 'Hotel Listings', to: '/accommodations' },
-  { label: 'About Avanta Living', to: '/about-cozy-escapes' },
-  { label: 'Terms', to: '/terms-and-conditions' },
+  { label: 'About Avanta Living', to: '/about-avanta' },
+  { label: 'Terms', to: '/terms' },
   { label: 'Contact', to: '/contact' },
 ]
 
