@@ -7,7 +7,11 @@ export default function Footer() {
       <Container className="pb-6 pt-16 md:pt-20">
         <div className="grid gap-10 text-center md:grid-cols-3 md:text-left">
           <div className="flex justify-center">
-            <img src="/logo.png" alt="Avanta Living Property" className="h-32 w-auto" />
+            <img
+              src="/public/images/logo.png"
+              alt="Avanta Living"
+              className="h-24 w-auto object-contain"
+            />
           </div>
 
           <div>
