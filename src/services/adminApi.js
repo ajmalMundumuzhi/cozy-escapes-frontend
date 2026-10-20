@@ -1,0 +1,52 @@
+
+const API_URL = (
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+).replace(/\/$/, "");
+
+const TOKEN_KEY = "avanta_admin_token";
+
+export const getAdminToken = () => sessionStorage.getItem(TOKEN_KEY);
+
+export const setAdminToken = (token) =>
+  sessionStorage.setItem(TOKEN_KEY, token);
+
+export const clearAdminToken = () => sessionStorage.removeItem(TOKEN_KEY);
+
+async function request(path, options = {}) {
+  const token = getAdminToken();
+
+  const response = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...options.headers,
+    },
+  });
+
+  const result = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    if (response.status === 401 && token) clearAdminToken();
+
+    throw new Error(
+      result.error?.message || result.message || "Request failed."
+    );
+  }
+
+  return result.data ?? result;
+}
+
+export const adminApi = {
+  login: (email, password) =>
+    request("/admin/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    }),
+
+  me: () => request("/admin/me"),
+
+  dashboard: () => request("/admin/dashboard"),
+};
+
+export default adminApi;

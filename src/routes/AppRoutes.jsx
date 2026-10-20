@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router-dom'
+
+import { Routes, Route, Navigate } from 'react-router-dom'
 import Layout from '../components/layout/Layout'
 import HomePage from '../pages/HomePage'
 import AboutPage from '../pages/AboutPage'
@@ -9,24 +10,42 @@ import InquiryPage from '../pages/InquiryPage'
 import BookingPage from '../pages/BookingPage'
 import PaymentSuccess from '../pages/PaymentSuccess'
 import PaymentCancelled from '../pages/PaymentCancelled'
+import AdminProtectedRoute from '../components/admin/AdminProtectedRoute'
+import AdminLogin from '../pages/admin/AdminLogin'
+import AdminDashboard from '../pages/admin/AdminDashboard'
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<HomePage />} />
-        <Route path='/accommodations' element={<ListingsPage />} />
-        <Route path='/about-alvanta' element={<AboutPage />} />
-        <Route path='/terms' element={<TermsPage />} />
+        <Route path="/accommodations" element={<ListingsPage />} />
+        <Route path="/about-alvanta" element={<AboutPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route
+          path="/accommodations/property/:id"
+          element={<PropertyDetailPage />}
+        />
+        <Route
+          path="/accommodations/property/:id/inquiry"
+          element={<InquiryPage />}
+        />
+        <Route
+          path="/accommodations/property/:id/book"
+          element={<BookingPage />}
+        />
+        <Route path="/payment/success" element={<PaymentSuccess />} />
+        <Route path="/payment/cancelled" element={<PaymentCancelled />} />
+      </Route>
 
-        <Route path='/accommodations/property/:id' element={<PropertyDetailPage />} />
+      <Route path="/admin/login" element={<AdminLogin />} />
 
-        <Route path='/accommodations/property/:id/inquiry' element={<InquiryPage />} />
-        <Route path='/accommodations/property/:id/book' element={<BookingPage />} />
-
-        <Route path='/payment/success' element={<PaymentSuccess />} />
-        <Route path='/payment/cancelled' element={<PaymentCancelled />} />
-        
+      <Route element={<AdminProtectedRoute />}>
+        <Route
+          path="/admin"
+          element={<Navigate to="/admin/dashboard" replace />}
+        />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Route>
     </Routes>
   )
