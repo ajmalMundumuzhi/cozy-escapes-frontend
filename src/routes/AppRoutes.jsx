@@ -15,6 +15,7 @@ import AdminLogin from '../pages/admin/AdminLogin'
 import AdminDashboard from '../pages/admin/AdminDashboard'
 import AdminProperties from '../pages/admin/AdminProperties'
 import AdminPropertyForm from '../pages/admin/AdminPropertyForm'
+import AdminBookings from '../pages/admin/AdminBooking'
 
 export default function AppRoutes() {
   return (
@@ -52,7 +53,8 @@ export default function AppRoutes() {
         <Route path='/admin/properties' element={<AdminProperties />} />
         <Route path='/admin/properties/new' element={<AdminPropertyForm />} />
         <Route path='/admin/properties/:id/edit' element={<AdminPropertyForm />} />
-        
+
+        <Route path='/admin/bookings' element={<AdminBookings />} />
       </Route>
     </Routes>
   )

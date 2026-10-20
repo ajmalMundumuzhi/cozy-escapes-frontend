@@ -77,6 +77,20 @@ export const adminApi = {
     request(`/admin/properties/${id}`, {
       method: "DELETE",
     }),
+    
+    bookings: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return request(`/admin/bookings${query ? `?${query}` : ""}`);
+    },
+
+    booking: (id) => request(`/admin/bookings/${id}`),
+
+    updateBookingStatus: (id, status) =>
+    request(`/admin/bookings/${id}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
+    }),
+
 
 };
 
