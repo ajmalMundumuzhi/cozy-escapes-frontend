@@ -27,7 +27,7 @@ export default function Header({ overlay = false }) {
     ? 'absolute inset-x-0 top-0 z-30 px-3 pt-3 md:px-6 md:pt-5'
     : 'relative z-30 px-3 py-3 md:px-6 md:py-5'
 
-  const tint = overlay ? 'border-white/30 bg-white/10' : 'border-white/10 bg-navy'
+  const tint = 'border-white/30 bg-white/10'
 
   return (
     <header className={wrapper}>
