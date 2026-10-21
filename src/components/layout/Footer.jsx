@@ -26,7 +26,7 @@ export default function Footer() {
             <h3 className="text-[18px] font-medium">Contact Us</h3>
             <ul className="mt-5 text-[16px] font-light leading-6">
               <li><a href="tel:+61420694394">+61 426964657</a></li>
-              <li><a href="mailto:info@cozyescapes.com.au">Hello.avantaliving@gmail.com</a></li>
+              <li><a href="mailto:Hello.avantaliving@gmail.com">Hello.avantaliving@gmail.com</a></li>
             </ul>
           </div>
         </div>
