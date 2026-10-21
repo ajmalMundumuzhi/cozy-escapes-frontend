@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar";
@@ -49,36 +48,45 @@ export default function AdminProperties() {
 
   async function toggleStatus(property) {
     const id = property._id;
+    const nextStatus = !property.isActive;
+
     setBusyId(id);
     setError("");
 
     try {
-      await adminApi.toggleProperty(id, !property.isActive);
+      await adminApi.toggleProperty(id, nextStatus);
       await loadProperties();
     } catch (err) {
-      setError(err.message || "Could not update property.");
+      setError(err.message || "Could not update property status.");
     } finally {
       setBusyId("");
     }
   }
 
-  async function deactivateProperty(property) {
-    if (
-      !window.confirm(
-        `Deactivate "${property.title || "this property"}"?`
-      )
-    ) {
-      return;
-    }
+  async function removeProperty(property) {
+    const confirmed = window.confirm(
+      `Are you sure you want to permanently remove "${
+        property.title || "this property"
+      }"? This action cannot be undone.`
+    );
+
+    if (!confirmed) return;
 
     setBusyId(property._id);
     setError("");
 
     try {
       await adminApi.deleteProperty(property._id);
-      await loadProperties();
+
+      setProperties((prev) =>
+        prev.filter((item) => item._id !== property._id)
+      );
     } catch (err) {
-      setError(err.message || "Could not deactivate property.");
+      setError(
+        err?.response?.data?.message ||
+          err.message ||
+          "Could not remove property."
+      );
     } finally {
       setBusyId("");
     }
@@ -103,22 +111,20 @@ export default function AdminProperties() {
           className="rounded-lg border border-stone-300 px-3 py-2 text-sm font-medium text-stone-700 transition hover:bg-stone-100 disabled:opacity-50"
         >
           {busy
-            ? "Updating..."
+            ? "Processing..."
             : property.isActive
               ? "Deactivate"
               : "Activate"}
         </button>
 
-        {property.isActive && (
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => deactivateProperty(property)}
-            className="rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-700 transition hover:bg-red-50 disabled:opacity-50"
-          >
-            Remove
-          </button>
-        )}
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => removeProperty(property)}
+          className="rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-700 transition hover:bg-red-50 disabled:opacity-50"
+        >
+          {busy ? "Processing..." : "Remove"}
+        </button>
       </div>
     );
   }
@@ -128,7 +134,6 @@ export default function AdminProperties() {
       <AdminSidebar />
 
       <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-10">
-        {/* Page heading */}
         <header className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#9A7842]">
@@ -152,7 +157,6 @@ export default function AdminProperties() {
           </Link>
         </header>
 
-        {/* Search */}
         <section className="mb-5 rounded-xl border border-stone-200 bg-white p-4 sm:p-5">
           <label
             htmlFor="property-search"
@@ -171,7 +175,6 @@ export default function AdminProperties() {
           />
         </section>
 
-        {/* Error message */}
         {error && (
           <div
             role="alert"
@@ -181,7 +184,6 @@ export default function AdminProperties() {
           </div>
         )}
 
-        {/* Loading */}
         {loading && (
           <div
             role="status"
@@ -191,7 +193,6 @@ export default function AdminProperties() {
           </div>
         )}
 
-        {/* Empty state */}
         {!loading && properties.length === 0 && (
           <div className="rounded-xl border border-stone-200 bg-white px-5 py-12 text-center">
             <h2 className="font-semibold text-[#17352B]">
@@ -203,7 +204,6 @@ export default function AdminProperties() {
           </div>
         )}
 
-        {/* Mobile property cards */}
         {!loading && properties.length > 0 && (
           <section className="grid grid-cols-1 gap-4 lg:hidden">
             {properties.map((property) => (
@@ -250,7 +250,6 @@ export default function AdminProperties() {
           </section>
         )}
 
-        {/* Desktop/tablet table */}
         {!loading && properties.length > 0 && (
           <div className="hidden overflow-hidden rounded-xl border border-stone-200 bg-white shadow-sm lg:block">
             <div className="overflow-x-auto">
@@ -267,7 +266,10 @@ export default function AdminProperties() {
 
                 <tbody className="divide-y divide-stone-100">
                   {properties.map((property) => (
-                    <tr key={property._id} className="hover:bg-stone-50/70">
+                    <tr
+                      key={property._id}
+                      className="hover:bg-stone-50/70"
+                    >
                       <td className="max-w-64 break-words px-5 py-4 font-medium text-stone-900">
                         {property.title || "Untitled property"}
                       </td>
