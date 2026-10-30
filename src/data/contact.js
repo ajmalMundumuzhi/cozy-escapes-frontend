@@ -1,5 +1,5 @@
 export const contact = {
-  phone: '+61 426964657',
+  phone: '+61 406957539',
   phoneHref: 'tel:+61426964657',
   email: 'Hello.avantaliving@gmail.com',
   whatsappUrl: 'https://wa.me/61426964657',

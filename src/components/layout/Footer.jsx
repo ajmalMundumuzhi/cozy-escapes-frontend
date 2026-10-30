@@ -17,7 +17,7 @@ export default function Footer() {
           <div>
             <h3 className="text-[18px] font-medium">Navigate</h3>
             <ul className="mt-5 text-[16px] font-light leading-6">
-              <li><Link to="/about-cozy-escapes">About Avanta Living</Link></li>
+              <li><Link to="/about-avanta">About Avanta Living</Link></li>
               <li><Link to="/accommodations">Hotel Listing</Link></li>
             </ul>
           </div>
@@ -25,7 +25,7 @@ export default function Footer() {
           <div>
             <h3 className="text-[18px] font-medium">Contact Us</h3>
             <ul className="mt-5 text-[16px] font-light leading-6">
-              <li><a href="tel:+61420694394">+61 426964657</a></li>
+              <li><a href="tel:+61420694394">+61 406957539</a></li>
               <li><a href="mailto:Hello.avantaliving@gmail.com">Hello.avantaliving@gmail.com</a></li>
             </ul>
           </div>
