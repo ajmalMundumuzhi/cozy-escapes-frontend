@@ -57,13 +57,15 @@ export default function Header({ overlay = false }) {
             <span className={label}>Menu</span>
           </button>
 
-          <Link
-            to="/"
-            onClick={() => setOpen(false)}
-            className="min-w-0 flex-1 text-center font-display text-base italic text-[#D9BB83] sm:text-xl lg:flex-none lg:text-2xl"
-          >
-            Avanta Living
-          </Link>
+          <div className="flex justify-center">
+            <Link to="/" aria-label="Avanta Living homepage">
+              <img
+                src="/images/logo.png"
+                alt="Avanta Living"
+                className="h-16 w-auto object-contain sm:h-20"
+              />
+            </Link>
+          </div>
 
           <div className="flex shrink-0 items-center">
             <Link
