@@ -1,5 +1,6 @@
 import Container from '../ui/Container'
 import Button from '../ui/Button'
+import { Link } from 'react-router'
 
 export default function ManagementBanner() {
   return (
@@ -17,9 +18,10 @@ export default function ManagementBanner() {
               stay effortlessly and start your journey with us.
             </p>
 
-            <Button to="/contact" className="mt-10 rounded-sm">
+            <Link> <Button to="/contact" className="mt-10 rounded-sm">
               List Your Property
             </Button>
+            </Link>
           </div>
 
           <img
