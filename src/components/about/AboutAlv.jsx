@@ -17,7 +17,7 @@ export default function AboutAlv() {
           <div>
             <p className={label}>Call us</p>
             <a href="tel:+61426964657" className="mt-3 block text-[18px] transition-colors hover:text-gold">
-              +61 426964657
+              +61 406957539
             </a>
           </div>
           <div>
