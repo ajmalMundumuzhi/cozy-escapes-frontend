@@ -16,8 +16,8 @@ export default function HomePage() {
       <FeaturedProperties/>
       {/* <PartnerLogos /> */}
       <ManagementBanner />
-      <Testimonials />
-      <ServicesFaq />
+      {/* <Testimonials /> */}
+      {/* <ServicesFaq /> */}
     </>
   )
 }

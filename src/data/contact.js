@@ -2,7 +2,7 @@ export const contact = {
   phone: '+61 406957539',
   phoneHref: 'tel:+61426964657',
   email: 'Hello.avantaliving@gmail.com',
-  whatsappUrl: 'https://wa.me/61426964657',
+  whatsappUrl: 'https://wa.me/61406957539',
   // PLACEHOLDERS: confirm with the client
   replyTime: 'Typically replies within 2 hours',
   hoursTimezone: 'Sydney time',

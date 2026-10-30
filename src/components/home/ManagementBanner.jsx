@@ -18,7 +18,7 @@ export default function ManagementBanner() {
               stay effortlessly and start your journey with us.
             </p>
 
-            <Link> <Button to="/contact" className="mt-10 rounded-sm">
+            <Link to="/accommodation"> <Button to="/contact" className="mt-10 rounded-sm">
               List Your Property
             </Button>
             </Link>
