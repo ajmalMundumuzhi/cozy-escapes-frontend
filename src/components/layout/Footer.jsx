@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+// import { Instagram, Facebook } from 'lucide-react'
+import { FaInstagram, FaFacebookF } from 'react-icons/fa'
 import Container from '../ui/Container'
 
 export default function Footer() {
@@ -19,26 +21,10 @@ export default function Footer() {
           <div>
             <h3 className="text-[18px] font-medium">Navigate</h3>
             <ul className="mt-5 space-y-2 text-[16px] font-light leading-6">
-              <li>
-                <Link to="/about-avanta" className="transition hover:text-[#D9BB83]">
-                  About Avanta Living
-                </Link>
-              </li>
-              <li>
-                <Link to="/accommodations" className="transition hover:text-[#D9BB83]">
-                  Find Your Stay
-                </Link>
-              </li>
-              <li>
-                <Link to="/terms" className="transition hover:text-[#D9BB83]">
-                  Terms & Conditions
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="transition hover:text-[#D9BB83]">
-                  Contact
-                </Link>
-              </li>
+              <li><Link to="/about-avanta" className="transition hover:text-[#D9BB83]">About Avanta Living</Link></li>
+              <li><Link to="/accommodations" className="transition hover:text-[#D9BB83]">Find Your Stay</Link></li>
+              <li><Link to="/terms" className="transition hover:text-[#D9BB83]">Terms & Conditions</Link></li>
+              <li><Link to="/contact" className="transition hover:text-[#D9BB83]">Contact</Link></li>
             </ul>
           </div>
 
@@ -51,10 +37,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a
-                  href="mailto:Hello.avantaliving@gmail.com"
-                  className="break-all transition hover:text-[#D9BB83]"
-                >
+                <a href="mailto:Hello.avantaliving@gmail.com" className="break-all transition hover:text-[#D9BB83]">
                   Hello.avantaliving@gmail.com
                 </a>
               </li>
@@ -63,14 +46,15 @@ export default function Footer() {
 
           <div>
             <h3 className="text-[18px] font-medium">Social Media</h3>
-            <ul className="mt-5 space-y-2 text-[16px] font-light leading-6">
+            <ul className="mt-5 space-y-4 text-[16px] font-light leading-6">
               <li>
                 <a
                   href="https://www.instagram.com/avantaliving?mdxt=MTh1MnllYTlrbHVwdg=="
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition hover:text-[#D9BB83]"
+                  className="inline-flex items-center justify-center gap-3 transition hover:text-[#D9BB83] lg:justify-start"
                 >
+                  <FaInstagram size={19} />
                   Instagram
                 </a>
               </li>
@@ -79,8 +63,9 @@ export default function Footer() {
                   href="https://www.facebook.com/share/14zbzkTUQgB/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition hover:text-[#D9BB83]"
+                  className="inline-flex items-center justify-center gap-3 transition hover:text-[#D9BB83] lg:justify-start"
                 >
+                  <FaFacebookF size={19} />
                   Facebook
                 </a>
               </li>

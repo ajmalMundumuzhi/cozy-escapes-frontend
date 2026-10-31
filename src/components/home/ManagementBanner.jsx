@@ -26,7 +26,7 @@ export default function ManagementBanner() {
           </div>
 
           <img
-            src="https://picsum.photos/seed/cozy-living/900/1100"
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7iMcy5mPLtJxPKtpw34sVTP6kNis2vqFEo-m1pSyRqa1yHmeKgnJfABar&s=10"
             alt="Living room"
             className="aspect-[4/5] w-full rounded-lg object-cover md:min-h-[640px] md:aspect-auto"
           />
