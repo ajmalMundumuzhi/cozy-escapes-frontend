@@ -10,9 +10,9 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <section className="relative z-20 mx-auto w-full h-1 max-w-7xl px-4 py-8">
-        {/* <GuestySearchWidget /> */}
-      </section>
+      {/* <section className="relative z-20 mx-auto w-full h-1 max-w-7xl px-4 py-8">
+        <GuestySearchWidget />
+      </section> */}
       <FeaturedProperties/>
       {/* <PartnerLogos /> */}
       <ManagementBanner />
