@@ -76,8 +76,8 @@ export default function Hero() {
       <div className="absolute inset-0 bg-gradient-to-b from-[#6f93b8]/30 via-black/10 to-[#2b3f55]/60" />
 
       <div className="relative z-10 flex flex-1 items-center justify-center px-4 pb-10 pt-28 text-center">
-        <h1 className="max-w-[900px] font-display text-5xl font-semibold italic leading-[1.05] md:text-7xl lg:text-[88px]">
-          Stay Beyond Expectations
+        <h1 className="max-w-[900px] font-display text-3xl font-semibold italic leading-[1.05] md:text-4xl lg:text-[70px]">
+          Elevated Short-Term Stays, Effortlessly Yours
         </h1>
       </div>
 

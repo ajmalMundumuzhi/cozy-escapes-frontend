@@ -90,7 +90,7 @@ export default function Header({ overlay = false }) {
             <div className="mb-6 flex items-center justify-between md:hidden">
               <Link to="/" onClick={() => setOpen(false)}>
                 <img
-                  src="/assets/logo.svg"
+                  src="/images/logo.png"
                   alt="Avanta Living"
                   className="h-12 w-auto object-contain"
                 />
