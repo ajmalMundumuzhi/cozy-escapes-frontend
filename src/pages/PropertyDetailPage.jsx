@@ -84,7 +84,7 @@ export default function PropertyDetailPage() {
             to="/accommodations"
             className="hover:text-gold-deep"
           >
-            Hotel Listings
+            Find Your Stay
           </Link>
         </nav>
 
