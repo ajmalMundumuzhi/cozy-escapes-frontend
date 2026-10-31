@@ -177,7 +177,7 @@ export default function AdminInquiries() {
         <div className="mx-auto w-full max-w-7xl space-y-5 sm:space-y-6">
           <header>
             <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
-              Inquiries
+             Enquiries
             </h1>
             <p className="mt-1 text-sm text-gray-500">
               Manage customer enquiries and follow-up status.

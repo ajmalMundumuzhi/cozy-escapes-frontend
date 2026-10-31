@@ -57,22 +57,6 @@ export default function ContactInfo() {
         </a>
         <p className="mt-3 text-[13px] text-gold">{contact.replyTime}</p>
       </div>
-
-      {/* Hours */}
-      <div className="mt-10 border-t border-white/15 pt-10">
-        <Heading>Business hours</Heading>
-        <dl className="mt-6 space-y-3 text-[16px]">
-          {contact.hours.map((h) => (
-            <div key={h.days} className="flex justify-between gap-4">
-              <dt className="text-white/70">{h.days}</dt>
-              <dd>{h.time}</dd>
-            </div>
-          ))}
-        </dl>
-        <p className="mt-4 text-[13px] leading-6 text-white/60">
-          {contact.hoursTimezone}. {contact.hoursNote}
-        </p>
-      </div>
     </aside>
   )
 }

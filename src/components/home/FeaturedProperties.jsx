@@ -56,12 +56,12 @@ function Details({ property }) {
       </ul>
 
       <div className="mt-6 flex gap-3">
-        <Link
+        {/* <Link
           to={`/accommodations/property/${id}/book`}
           className="flex-1 whitespace-nowrap bg-gold-deep px-4 py-3 text-center text-[12px] font-medium uppercase tracking-[0.14em] text-white transition-colors hover:bg-navy"
         >
           Book Now
-        </Link>
+        </Link> */}
         <Link
           to={`/accommodations/property/${id}`}
           className="flex-1 whitespace-nowrap border border-white/50 px-4 py-3 text-center text-[12px] font-medium uppercase tracking-[0.14em] transition-colors hover:bg-white hover:text-navy"

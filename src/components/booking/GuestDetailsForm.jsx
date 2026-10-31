@@ -35,6 +35,7 @@ export default function GuestDetailsForm({ values, errors, onChange }) {
         <Field label="First name" required htmlFor="f-firstName" error={errors.firstName}>
           <input {...bind('firstName')} autoComplete="given-name" placeholder="First name" />
         </Field>
+
         <Field label="Last name" required htmlFor="f-lastName" error={errors.lastName}>
           <input {...bind('lastName')} autoComplete="family-name" placeholder="Last name" />
         </Field>
@@ -42,8 +43,7 @@ export default function GuestDetailsForm({ values, errors, onChange }) {
         <Field label="Email" required htmlFor="f-email" error={errors.email}>
           <input {...bind('email')} type="email" autoComplete="email" placeholder="Email" />
         </Field>
-        
-        
+
         <Field label="Phone number" required htmlFor="f-phone" error={errors.phone}>
           <div className="grid w-full grid-cols-[110px_minmax(0,1fr)] gap-2">
             <select
@@ -69,34 +69,30 @@ export default function GuestDetailsForm({ values, errors, onChange }) {
             />
           </div>
         </Field>
+      </div>
 
+      <div className="mt-14">
+        <SectionTitle>Where are you travelling from?</SectionTitle>
 
+        <div className="mt-8 grid gap-6 sm:grid-cols-2">
+          <Field label="City" required htmlFor="f-city" error={errors.city}>
+            <input {...bind('city')} autoComplete="address-level2" placeholder="City" />
+          </Field>
 
-        <Field label="Address" required htmlFor="f-address" error={errors.address} className="sm:col-span-2">
-          <input {...bind('address')} autoComplete="address-line1" placeholder="Address" />
-        </Field>
-        <Field label="Address line 2" htmlFor="f-address2" className="sm:col-span-2">
-          <input {...bind('address2')} autoComplete="address-line2" placeholder="Address line 2" />
-        </Field>
-
-        <Field label="City" required htmlFor="f-city" error={errors.city}>
-          <input {...bind('city')} autoComplete="address-level2" placeholder="City" />
-        </Field>
-        <Field label="Zip code" required htmlFor="f-zip" error={errors.zip}>
-          <input {...bind('zip')} autoComplete="postal-code" placeholder="Zip code" />
-        </Field>
-
-        <Field label="State" htmlFor="f-state">
-          <input {...bind('state')} autoComplete="address-level1" placeholder="State" />
-        </Field>
-        <Field label="Country" required htmlFor="f-country" error={errors.country}>
-          <input {...bind('country')} list="country-list" autoComplete="country-name" placeholder="Country" />
-          <datalist id="country-list">
-            {COUNTRIES.map((c) => (
-              <option key={c} value={c} />
-            ))}
-          </datalist>
-        </Field>
+          <Field label="Country" required htmlFor="f-country" error={errors.country}>
+            <input
+              {...bind('country')}
+              list="country-list"
+              autoComplete="country-name"
+              placeholder="Country"
+            />
+            <datalist id="country-list">
+              {COUNTRIES.map((c) => (
+                <option key={c} value={c} />
+              ))}
+            </datalist>
+          </Field>
+        </div>
       </div>
 
       <div className="mt-14">

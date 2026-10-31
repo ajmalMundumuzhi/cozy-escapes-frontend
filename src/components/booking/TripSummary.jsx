@@ -318,17 +318,6 @@ export default function TripSummary({
         </div>
       )}
 
-      {/* Promotions */}
-      <label className="mt-6 flex cursor-pointer items-center gap-3 border-t border-gold/30 pt-6 text-[15px] text-body">
-        <input
-          type="checkbox"
-          checked={marketing}
-          onChange={(e) => onMarketingChange(e.target.checked)}
-          className="h-5 w-5 accent-gold-deep"
-        />
-        Send me exclusive offers &amp; promotions
-      </label>
-
       {/* Submit */}
       {showSubmit && (
         <>

@@ -142,7 +142,7 @@ export default function ContactForm({ initialSubject }) {
       {status === 'error' && (
         <p role="alert" className="mt-6 border border-red-300 bg-red-50 px-4 py-3 text-[14px] text-red-700">
           Sorry, your message couldn’t be sent. Please try again, or call us on {' '}
-          <a href="tel:+61426964657" className="underline">+61 426964657</a>.
+          <a href="tel:+61426964657" className="underline">+61 406957539</a>.
         </p>
       )}
 

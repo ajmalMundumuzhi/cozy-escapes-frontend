@@ -78,12 +78,12 @@ export default function PropertyCard({ property }) {
         </ul>
 
         <div className="mt-auto flex gap-3 pt-7">
-          <Link
+          {/* <Link
             to={`/accommodations/property/${id}/book`}
             className="flex-1 bg-gold-deep py-3 text-center text-[12px] font-medium uppercase tracking-[0.18em] text-white transition-colors hover:bg-navy"
           >
             Book Now
-          </Link>
+          </Link> */}
           <Link
             to={detailPath}
             className="flex-1 border border-navy py-3 text-center text-[12px] font-medium uppercase tracking-[0.18em] text-navy transition-colors hover:bg-navy hover:text-white"

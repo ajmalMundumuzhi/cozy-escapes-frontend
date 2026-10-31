@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 
 const links = [
   { label: 'Home', to: '/' },
-  { label: 'Hotel Listings', to: '/accommodations' },
+  { label: 'Find Your Stay', to: '/accommodations' },
   { label: 'About Avanta Living', to: '/about-avanta' },
-  { label: 'Terms', to: '/terms' },
+  { label: 'Terms & Conditions', to: '/terms' },
   { label: 'Contact', to: '/contact' },
 ]
 

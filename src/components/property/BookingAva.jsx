@@ -18,24 +18,24 @@ export default function BookingAva({ id, rating, search = '' }) {
         </p>
 
         <div className="mt-8 grid gap-3">
-          <Link
+          {/* <Link
             to={book}
             className="bg-gold-deep py-4 text-center text-[12px] font-medium uppercase tracking-[0.18em] text-white transition-colors hover:bg-navy"
           >
             Book Now
-          </Link>
+          </Link> */}
           <Link
             to={inquiry}
             className="border border-navy py-4 text-center text-[12px] font-medium uppercase tracking-[0.18em] text-navy transition-colors hover:bg-navy hover:text-white"
           >
-            Send Inquiry
+            Send Enquiry
           </Link>
         </div>
 
         <p className="mt-6 border-t border-gold/30 pt-5 text-center text-[14px] text-body">
           Prefer to talk?{' '}
           <a href="tel:+61426964657" className="text-ink underline decoration-gold underline-offset-4">
-            +61 426964657
+            +61 406957539
           </a>
         </p>
       </aside>
@@ -55,12 +55,12 @@ export default function BookingAva({ id, rating, search = '' }) {
           >
             Inquiry
           </Link>
-          <Link
+          {/* <Link
             to={book}
             className="bg-gold-deep px-6 py-3 text-[12px] font-medium uppercase tracking-[0.15em] text-white"
           >
             Book Now
-          </Link>
+          </Link> */}
         </div>
       </div>
     </>

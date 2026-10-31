@@ -26,7 +26,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link to="/accommodations" className="transition hover:text-[#D9BB83]">
-                  Hotel Listings
+                  Find Your Stay
                 </Link>
               </li>
               <li>

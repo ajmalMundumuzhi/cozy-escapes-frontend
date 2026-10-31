@@ -20,8 +20,8 @@ import {
 
 const MODES = {
   inquiry: {
-    title: 'Inquiry',
-    button: 'Send Inquiry',
+    title: 'Enquiry',
+    button: 'Send Enquiry',
     needsDates: false,
   },
   booking: {
@@ -293,7 +293,7 @@ export default function Reservation({ mode }) {
       } catch (error) {
         setSubmitError(
           error.message ||
-            'Unable to send your inquiry. Please try again.'
+            'Unable to send your Enquiry. Please try again.'
         )
       } finally {
         setSubmitting(false)
