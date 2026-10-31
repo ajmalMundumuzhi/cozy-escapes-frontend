@@ -11,7 +11,7 @@ export default function HomePage() {
     <>
       <Hero />
       <section className="relative z-20 mx-auto w-full h-1 max-w-7xl px-4 py-8">
-        <GuestySearchWidget />
+        {/* <GuestySearchWidget /> */}
       </section>
       <FeaturedProperties/>
       {/* <PartnerLogos /> */}
