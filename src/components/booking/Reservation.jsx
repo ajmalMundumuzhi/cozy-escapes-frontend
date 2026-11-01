@@ -224,10 +224,15 @@ export default function Reservation({ mode }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    console.log("RESERVATION FORM SUBMITTED");
 
     if (submitting) return
 
     const validationErrors = validateGuest(values)
+    if (mode === 'inquiry') {
+      delete validationErrors.address
+      delete validationErrors.zip
+    }
 
     if (cfg.needsDates && !(range.start && range.end)) {
       validationErrors.dates =
