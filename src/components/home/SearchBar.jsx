@@ -37,19 +37,32 @@ function loadGuestyWidget() {
       )
 
       if (existingScript) {
-        existingScript.addEventListener('load', () => {
-          if (window.GuestySearchBarWidget) {
-            resolve(window.GuestySearchBarWidget)
-          } else {
-            widgetPromise = null
-            reject(new Error('Guesty widget failed to initialize.'))
-          }
-        }, { once: true })
+        if (window.GuestySearchBarWidget) {
+          resolve(window.GuestySearchBarWidget)
+          return
+        }
 
-        existingScript.addEventListener('error', () => {
-          widgetPromise = null
-          reject(new Error('Unable to load Guesty search widget.'))
-        }, { once: true })
+        existingScript.addEventListener(
+          'load',
+          () => {
+            if (window.GuestySearchBarWidget) {
+              resolve(window.GuestySearchBarWidget)
+            } else {
+              widgetPromise = null
+              reject(new Error('Guesty widget failed to initialize.'))
+            }
+          },
+          { once: true }
+        )
+
+        existingScript.addEventListener(
+          'error',
+          () => {
+            widgetPromise = null
+            reject(new Error('Unable to load Guesty search widget.'))
+          },
+          { once: true }
+        )
 
         return
       }
@@ -108,7 +121,7 @@ export default function SearchBar() {
   return (
     <div
       id={WIDGET_ID}
-      className="w-full"
+      className="guesty-search-widget mx-auto block w-full"
     />
   )
 }

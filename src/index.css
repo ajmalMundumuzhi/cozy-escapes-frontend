@@ -30,3 +30,28 @@ html {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+#search-widget_IO312PWQ {
+  display: block !important;
+  width: 100% !important;
+  max-width: 1100px;
+  margin-inline: auto !important;
+  position: relative;
+  z-index: 30;
+}
+
+#search-widget_IO312PWQ > * {
+  max-width: 100%;
+}
+
+@media (max-width: 767px) {
+  #search-widget_IO312PWQ {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #search-widget_IO312PWQ,
+  #search-widget_IO312PWQ > * {
+    overflow: visible !important;
+  }
+}

@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import SearchBar from './SearchBar'
 import useProperties from '../../hooks/useProperties'
 
-const FALLBACK_IMAGE = 'https://assets.minorhotels.com/image/upload/q_auto,f_auto/media/minor/mhg/images/media/blog/2025-blog-post/09-australia-best-beaches/08.png'
+const FALLBACK_IMAGE =
+  'https://assets.minorhotels.com/image/upload/q_auto,f_auto/media/minor/mhg/images/media/blog/2025-blog-post/09-australia-best-beaches/08.png'
 
 export default function Hero() {
   const { properties = [] } = useProperties()
@@ -51,7 +52,7 @@ export default function Hero() {
   const currentImage = images[activeIndex] || FALLBACK_IMAGE
 
   return (
-    <section className="relative flex min-h-[680px] flex-col overflow-hidden text-white md:h-screen">
+    <section className="relative flex min-h-[680px] flex-col overflow-x-clip overflow-y-visible text-white md:min-h-screen">
       {images.length > 0 ? (
         images.map((image, index) => (
           <img
@@ -81,8 +82,10 @@ export default function Hero() {
         </h1>
       </div>
 
-      <div className="relative z-20">
-        <SearchBar />
+      <div className="relative z-30 mt-auto w-full px-4 pb-6 md:px-8 md:pb-8">
+        <div className="mx-auto flex w-full max-w-6xl justify-center">
+          <SearchBar />
+        </div>
       </div>
     </section>
   )
