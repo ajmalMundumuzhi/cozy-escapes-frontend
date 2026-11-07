@@ -82,11 +82,11 @@ export default function Hero() {
         </h1>
       </div>
 
-      <div className="relative z-30 mt-auto w-full px-4 pb-6 md:px-8 md:pb-8">
-        <div className="mx-auto flex w-full max-w-6xl justify-center">
-          <SearchBar />
-        </div>
-      </div>
+      <div className="relative z-30 mt-auto w-full px-6 pb-8">
+  <div className="mx-auto w-full max-w-[1250px]">
+    <SearchBar />
+  </div>
+</div>
     </section>
   )
 }

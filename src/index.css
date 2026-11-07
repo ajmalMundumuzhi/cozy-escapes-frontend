@@ -34,24 +34,34 @@ html {
 #search-widget_IO312PWQ {
   display: block !important;
   width: 100% !important;
-  max-width: 1100px;
-  margin-inline: auto !important;
+  max-width: 1250px !important;
+  min-width: 0 !important;
+  margin: 0 auto !important;
   position: relative;
   z-index: 30;
+  box-sizing: border-box;
+}
+
+#search-widget_IO312PWQ,
+#search-widget_IO312PWQ * {
+  box-sizing: border-box;
 }
 
 #search-widget_IO312PWQ > * {
-  max-width: 100%;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+@media (min-width: 768px) {
+  #search-widget_IO312PWQ {
+    min-height: 90px;
+  }
 }
 
 @media (max-width: 767px) {
   #search-widget_IO312PWQ {
     width: 100% !important;
     max-width: 100% !important;
-  }
-
-  #search-widget_IO312PWQ,
-  #search-widget_IO312PWQ > * {
-    overflow: visible !important;
+    min-height: 100px;
   }
 }
