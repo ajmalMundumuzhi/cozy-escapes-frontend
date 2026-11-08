@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { plural } from '../../utils/formatters'
+import { buildGuestyBookingUrl } from '../../services/guesty.service'
 
 function Stat({ label, children }) {
   return (
@@ -22,12 +23,13 @@ function Stat({ label, children }) {
 }
 
 export default function PropertyCard({ property }) {
-  const { id, title, image, rating, guests, bedrooms, bathrooms, amenities, bookUrl } = property
+  const { id, title, image, rating, guests, bedrooms, bathrooms, amenities } = property
 
   // "Name | Highlights" -> main title + gold subtitle
   const [main, ...rest] = title.split('|')
   const sub = rest.join('|').trim()
   const detailPath = `/accommodations/property/${id}`
+  const bookingUrl = buildGuestyBookingUrl({ propertyId: id })
 
   return (
     <article className="group flex h-full flex-col bg-white shadow-sm ring-1 ring-black/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -37,12 +39,14 @@ export default function PropertyCard({ property }) {
           alt=""
           className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
-        <span className="absolute left-4 top-4 flex items-center gap-1.5 bg-white/95 px-3 py-1.5 text-[13px] font-medium text-ink shadow-sm">
-          <svg viewBox="0 0 24 24" className="h-4 w-4 fill-gold" aria-hidden="true">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-          </svg>
-          {rating}
-        </span>
+        {rating != null && (
+          <span className="absolute left-4 top-4 flex items-center gap-1.5 bg-white/95 px-3 py-1.5 text-[13px] font-medium text-ink shadow-sm">
+            <svg viewBox="0 0 24 24" className="h-4 w-4 fill-gold" aria-hidden="true">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            {rating}
+          </span>
+        )}
       </Link>
 
       <div className="flex flex-1 flex-col p-6">
@@ -78,12 +82,12 @@ export default function PropertyCard({ property }) {
         </ul>
 
         <div className="mt-auto flex gap-3 pt-7">
-          {/* <Link
-            to={`/accommodations/property/${id}/book`}
+          <a
+            href={bookingUrl}
             className="flex-1 bg-gold-deep py-3 text-center text-[12px] font-medium uppercase tracking-[0.18em] text-white transition-colors hover:bg-navy"
           >
             Book Now
-          </Link> */}
+          </a>
           <Link
             to={detailPath}
             className="flex-1 border border-navy py-3 text-center text-[12px] font-medium uppercase tracking-[0.18em] text-navy transition-colors hover:bg-navy hover:text-white"

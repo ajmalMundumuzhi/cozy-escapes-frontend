@@ -3,13 +3,13 @@ import { useSearchParams } from 'react-router-dom'
 import Container from '../components/ui/Container'
 import FilterTabs from '../components/property/FilterTabs'
 import PropertyGrid from '../components/property/PropertyGrid'
-import useProperties from '../hooks/useProperties'
+import useGuestyProperties from '../hooks/useGuestyProperties'
 import { plural } from '../utils/formatters'
 
 const BEDROOMS = ['1', '2', '3']
 
 export default function ListingsPage() {
-  const { properties } = useProperties()
+  const { properties, loading, error, retry } = useGuestyProperties()
   const [params, setParams] = useSearchParams()
 
   // Filters live in the URL, so the home-page search and shared links both work
@@ -24,6 +24,8 @@ export default function ListingsPage() {
     setParams(next, { replace: true })
   }
 
+  const hasRatings = properties.some((p) => p.rating != null)
+
   const tabs = [
     { value: 'all', label: 'All', count: properties.length },
     ...BEDROOMS.map((n) => ({
@@ -37,7 +39,7 @@ export default function ListingsPage() {
     const list = properties.filter(
       (p) => (bedrooms === 'all' || String(p.bedrooms) === bedrooms) && p.guests >= guests
     )
-    if (sort === 'rating') list.sort((a, b) => b.rating - a.rating)
+    if (sort === 'rating') list.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
     if (sort === 'guests') list.sort((a, b) => b.guests - a.guests)
     return list
   }, [properties, bedrooms, guests, sort])
@@ -62,43 +64,64 @@ export default function ListingsPage() {
       {/* Listings */}
       <section className="py-12 md:py-16">
         <Container>
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <FilterTabs tabs={tabs} active={bedrooms} onChange={(v) => update('bedrooms', v)} />
-
-            <label className="flex items-center gap-3 text-[14px] text-body">
-              <span>Sort by</span>
-              <select
-                value={sort}
-                onChange={(e) => update('sort', e.target.value)}
-                className="border-b border-gold/60 bg-transparent py-1 pr-6 text-ink outline-none"
-              >
-                <option value="recommended">Recommended</option>
-                <option value="rating">Top rated</option>
-                <option value="guests">Most guests</option>
-              </select>
-            </label>
-          </div>
-
-          <div className="mt-6 flex flex-wrap items-center gap-3 text-[14px] text-body">
-            <span>
-              Showing {visible.length} of {properties.length} {visible.length === 1 ? 'stay' : 'stays'}
-            </span>
-            {guests > 0 && (
+          {loading ? (
+            <div className="py-24 text-center" role="status">
+              <p className="font-display text-3xl text-ink">Loading our properties…</p>
+              <p className="mt-3 text-[15px] text-body">This can take a few seconds.</p>
+            </div>
+          ) : error ? (
+            <div className="py-24 text-center">
+              <p className="font-display text-3xl text-ink">We couldn’t load the properties</p>
+              <p className="mt-3 text-[16px] text-body">{error}</p>
               <button
                 type="button"
-                onClick={() => update('guests', '')}
-                className="flex items-center gap-2 rounded-full border border-gold/50 px-3 py-1 text-[13px] text-ink hover:border-gold-deep"
+                onClick={retry}
+                className="mt-8 border border-navy px-8 py-3 text-[12px] font-medium uppercase tracking-[0.18em] text-navy transition-colors hover:bg-navy hover:text-white"
               >
-                {plural(guests, 'guest')} or more <span aria-hidden="true">×</span>
-                <span className="sr-only">Remove guests filter</span>
+                Try again
               </button>
-            )}
-          </div>
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                <FilterTabs tabs={tabs} active={bedrooms} onChange={(v) => update('bedrooms', v)} />
 
-          {/* key makes the grid fade in again whenever the filter changes */}
-          <div key={`${bedrooms}-${guests}-${sort}`} className="mt-10 animate-fade-up">
-            <PropertyGrid properties={visible} onReset={() => setParams({}, { replace: true })} />
-          </div>
+                <label className="flex items-center gap-3 text-[14px] text-body">
+                  <span>Sort by</span>
+                  <select
+                    value={sort}
+                    onChange={(e) => update('sort', e.target.value)}
+                    className="border-b border-gold/60 bg-transparent py-1 pr-6 text-ink outline-none"
+                  >
+                    <option value="recommended">Recommended</option>
+                    {hasRatings && <option value="rating">Top rated</option>}
+                    <option value="guests">Most guests</option>
+                  </select>
+                </label>
+              </div>
+
+              <div className="mt-6 flex flex-wrap items-center gap-3 text-[14px] text-body">
+                <span>
+                  Showing {visible.length} of {properties.length} {visible.length === 1 ? 'stay' : 'stays'}
+                </span>
+                {guests > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => update('guests', '')}
+                    className="flex items-center gap-2 rounded-full border border-gold/50 px-3 py-1 text-[13px] text-ink hover:border-gold-deep"
+                  >
+                    {plural(guests, 'guest')} or more <span aria-hidden="true">×</span>
+                    <span className="sr-only">Remove guests filter</span>
+                  </button>
+                )}
+              </div>
+
+              {/* key makes the grid fade in again whenever the filter changes */}
+              <div key={`${bedrooms}-${guests}-${sort}`} className="mt-10 animate-fade-up">
+                <PropertyGrid properties={visible} onReset={() => setParams({}, { replace: true })} />
+              </div>
+            </>
+          )}
         </Container>
       </section>
     </>

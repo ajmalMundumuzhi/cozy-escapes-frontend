@@ -1,36 +1,34 @@
+
 import { useEffect, useMemo, useState } from 'react'
 import SearchBar from './SearchBar'
-import useProperties from '../../hooks/useProperties'
+import useGuestyProperties from '../../hooks/useGuestyProperties'
 
 const FALLBACK_IMAGE =
   'https://assets.minorhotels.com/image/upload/q_auto,f_auto/media/minor/mhg/images/media/blog/2025-blog-post/09-australia-best-beaches/08.png'
 
 export default function Hero() {
-  const { properties = [] } = useProperties()
+  const { properties = [] } = useGuestyProperties()
   const [activeIndex, setActiveIndex] = useState(0)
 
   const images = useMemo(() => {
-    return [...properties]
-      .sort(
-        (a, b) =>
-          new Date(b.createdAt || b.updatedAt || 0).getTime() -
-          new Date(a.createdAt || a.updatedAt || 0).getTime()
-      )
+    return properties
       .map((property) => {
-        const firstImage = Array.isArray(property.images)
-          ? property.images[0]
-          : null
+        if (Array.isArray(property.images)) {
+          const firstImage = property.images[0]
 
-        if (typeof firstImage === 'string') {
-          return firstImage
+          if (typeof firstImage === 'string') {
+            return firstImage
+          }
+
+          return (
+            firstImage?.url ||
+            firstImage?.secure_url ||
+            firstImage?.src ||
+            ''
+          )
         }
 
-        return (
-          firstImage?.url ||
-          firstImage?.secure_url ||
-          firstImage?.src ||
-          ''
-        )
+        return property.image || ''
       })
       .filter(Boolean)
   }, [properties])
@@ -70,6 +68,7 @@ export default function Hero() {
         <img
           src={currentImage}
           alt=""
+          aria-hidden="true"
           className="absolute inset-0 h-full w-full object-cover"
         />
       )}
@@ -83,10 +82,10 @@ export default function Hero() {
       </div>
 
       <div className="relative z-30 mt-auto w-full px-6 pb-8">
-  <div className="mx-auto w-full max-w-[1250px]">
-    <SearchBar />
-  </div>
-</div>
+        <div className="mx-auto w-full max-w-[1250px]">
+          <SearchBar />
+        </div>
+      </div>
     </section>
   )
 }

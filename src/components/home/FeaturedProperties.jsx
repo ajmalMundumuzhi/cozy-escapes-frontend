@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Container from '../ui/Container'
-import useProperties from '../../hooks/useProperties'
+import useGuestyProperties from '../../hooks/useGuestyProperties'
 import useMediaQuery from '../../hooks/useMediaQuery'
 import { formatStats } from '../../utils/formatters'
+import { buildGuestyBookingUrl } from '../../services/guesty.service'
 
 // Card height by distance from the selected card (selected, next to it, further away)
 const HEIGHTS = [600, 520, 440]
@@ -26,10 +27,12 @@ function Details({ property }) {
 
   return (
     <div className="absolute inset-x-0 bottom-0 p-6 text-white md:p-8">
-      <div className="flex items-center gap-2 text-sm">
-        <Star />
-        <span>{rating}</span>
-      </div>
+      {rating != null && (
+        <div className="flex items-center gap-2 text-sm">
+          <Star />
+          <span>{rating}</span>
+        </div>
+      )}
 
       <h3 className="mt-3 line-clamp-3 font-display text-2xl font-medium leading-snug md:text-3xl">
         {title}
@@ -56,12 +59,12 @@ function Details({ property }) {
       </ul>
 
       <div className="mt-6 flex gap-3">
-        {/* <Link
-          to={`/accommodations/property/${id}/book`}
+        <a
+          href={buildGuestyBookingUrl({ propertyId: id })}
           className="flex-1 whitespace-nowrap bg-gold-deep px-4 py-3 text-center text-[12px] font-medium uppercase tracking-[0.14em] text-white transition-colors hover:bg-navy"
         >
           Book Now
-        </Link> */}
+        </a>
         <Link
           to={`/accommodations/property/${id}`}
           className="flex-1 whitespace-nowrap border border-white/50 px-4 py-3 text-center text-[12px] font-medium uppercase tracking-[0.14em] transition-colors hover:bg-white hover:text-navy"
@@ -74,16 +77,25 @@ function Details({ property }) {
 }
 
 export default function FeaturedProperties() {
-  const { properties } = useProperties()
+  const { properties, loading, error, retry } = useGuestyProperties()
   const items = properties.slice(0, 6)
   const isDesktop = useMediaQuery('(min-width: 1024px)')
-  const [active, setActive] = useState(Math.floor((items.length - 1) / 2))
 
-  const prev = () => setActive((a) => Math.max(0, a - 1))
-  const next = () => setActive((a) => Math.min(items.length - 1, a + 1))
+  // The middle card is selected by default. It is worked out from the loaded
+  // items, because the list is empty on the first render.
+  const [selected, setSelected] = useState(null)
+  const defaultActive = Math.max(0, Math.floor((items.length - 1) / 2))
+  const active = selected ?? defaultActive
+  const setActive = setSelected
+
+  const prev = () => setSelected(Math.max(0, active - 1))
+  const next = () => setSelected(Math.min(items.length - 1, active + 1))
 
   const arrow =
     'flex h-9 w-9 items-center justify-center border border-white/40 text-white transition-colors hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent'
+
+  // Nothing to feature: hide the whole section instead of showing an empty block
+  if (!loading && !error && items.length === 0) return null
 
   return (
     <section className="bg-navy py-16 text-white md:py-24">
@@ -100,7 +112,22 @@ export default function FeaturedProperties() {
           </p>
         </div>
 
-        {isDesktop ? (
+        {loading ? (
+          <div className="py-24 text-center" role="status">
+            <p className="text-[16px] text-white/70">Loading our properties…</p>
+          </div>
+        ) : error ? (
+          <div className="py-24 text-center">
+            <p className="text-[16px] text-white/70">{error}</p>
+            <button
+              type="button"
+              onClick={retry}
+              className="mt-6 border border-white/50 px-8 py-3 text-[12px] font-medium uppercase tracking-[0.18em] transition-colors hover:bg-white hover:text-navy"
+            >
+              Try again
+            </button>
+          </div>
+        ) : isDesktop ? (
           <>
             {/* Desktop: selected card expands, the rest get narrower and shorter */}
             <div className="mt-14 flex items-end gap-3">
