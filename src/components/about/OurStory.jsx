@@ -11,9 +11,9 @@ export default function OurStory() {
           <div className="relative">
             <span className="absolute inset-0 translate-x-4 translate-y-4 border border-gold" aria-hidden="true" />
             <img
-              src="https://picsum.photos/seed/avanta-story/900/1100"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTKtZfIdUOyFwPMKI-b6oXoqs-yScc7AGrdveblGTX4Q&s=10"
               alt="A thoughtfully designed living space"
-              className="relative aspect-[4/5] w-full object-cover"
+              className="relative aspect-[4/5] w-fullobject-cover"
             />
           </div>
 

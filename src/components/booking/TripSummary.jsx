@@ -1,6 +1,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+
 import DateRangePicker from '../ui/DateRangePicker'
 import { cancellationPolicy } from '../../data/policies'
 import { formatDate, plural } from '../../utils/formatters'
@@ -48,7 +49,6 @@ export default function TripSummary({
   const [guestsOpen, setGuestsOpen] = useState(false)
   const pickerRef = useRef(null)
 
-  // Close the calendar when clicking outside it.
   useEffect(() => {
     const onDown = (e) => {
       if (pickerRef.current && !pickerRef.current.contains(e.target)) {
@@ -57,13 +57,22 @@ export default function TripSummary({
     }
 
     document.addEventListener('mousedown', onDown)
+
     return () => document.removeEventListener('mousedown', onDown)
   }, [])
 
-  const [main, ...rest] = property.title.split('|')
+  const safeProperty = property || {}
+  const propertyTitle = safeProperty.title || 'Selected property'
+  const [main, ...rest] = propertyTitle.split('|')
   const sub = rest.join('|').trim()
 
-  const { start, end } = range
+  const propertyImage = safeProperty.image || ''
+  const propertyRating = safeProperty.rating
+  const maxGuests = Math.max(1, Number(safeProperty.guests) || 1)
+  const currentGuests = Math.max(1, Number(guests) || 1)
+
+  const { start, end } = range || {}
+
   const nights =
     start && end ? Math.round((end - start) / 86400000) : 0
 
@@ -74,18 +83,22 @@ export default function TripSummary({
     : 'Select dates'
 
   const breakdown = pricingQuote?.priceBreakdown
+
   const showPrice =
     !pricingLoading && availability === true && Boolean(breakdown)
 
   return (
     <div className="border-t-2 border-gold bg-white p-6 shadow-lg ring-1 ring-black/5 md:p-8">
-      {/* Property */}
       <div className="flex gap-4">
-        <img
-          src={property.image}
-          alt=""
-          className="h-24 w-24 shrink-0 object-cover"
-        />
+        {propertyImage ? (
+          <img
+            src={propertyImage}
+            alt=""
+            className="h-24 w-24 shrink-0 object-cover"
+          />
+        ) : (
+          <div className="h-24 w-24 shrink-0 bg-ivory" />
+        )}
 
         <div className="min-w-0">
           <h2 className="font-display text-xl font-medium leading-snug text-ink">
@@ -98,20 +111,21 @@ export default function TripSummary({
             </p>
           )}
 
-          <p className="mt-2 flex items-center gap-1.5 text-[14px] text-ink">
-            <svg
-              viewBox="0 0 24 24"
-              className="h-4 w-4 fill-gold"
-              aria-hidden="true"
-            >
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-            </svg>
-            {property.rating}
-          </p>
+          {propertyRating != null && (
+            <p className="mt-2 flex items-center gap-1.5 text-[14px] text-ink">
+              <svg
+                viewBox="0 0 24 24"
+                className="h-4 w-4 fill-gold"
+                aria-hidden="true"
+              >
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+              {propertyRating}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Cancellation policy */}
       <div className="mt-7 border-t border-gold/30 pt-6">
         <h3 className="text-[16px] font-semibold text-ink">
           Cancellation policy
@@ -124,14 +138,16 @@ export default function TripSummary({
         </ul>
       </div>
 
-      {/* Trip details */}
       <div id="trip-details" className="mt-6 border-t border-gold/30 pt-6">
-        <h3 className="text-[16px] font-semibold text-ink">Trip details</h3>
+        <h3 className="text-[16px] font-semibold text-ink">
+          Trip details
+        </h3>
 
         <div ref={pickerRef} className="relative mt-3">
           <div className="flex items-center justify-between gap-4 py-2 text-[15px] text-body">
             <span>
               {datesText}
+
               {nights > 0 && (
                 <span className="ml-2 text-gold-deep">
                   ({plural(nights, 'night')})
@@ -150,8 +166,8 @@ export default function TripSummary({
 
           {pickerOpen && (
             <DateRangePicker
-              start={range.start}
-              end={range.end}
+              start={start}
+              end={end}
               onChange={(s, e) => onRangeChange({ start: s, end: e })}
               onConfirm={() => setPickerOpen(false)}
             />
@@ -165,7 +181,7 @@ export default function TripSummary({
         )}
 
         <div className="flex items-center justify-between gap-4 py-2 text-[15px] text-body">
-          <span>{plural(guests, 'guest')}</span>
+          <span>{plural(currentGuests, 'guest')}</span>
 
           <button
             type="button"
@@ -181,8 +197,10 @@ export default function TripSummary({
             <button
               type="button"
               aria-label="Fewer guests"
-              onClick={() => onGuestsChange(Math.max(1, guests - 1))}
-              disabled={guests <= 1}
+              onClick={() =>
+                onGuestsChange(Math.max(1, currentGuests - 1))
+              }
+              disabled={currentGuests <= 1}
               className={stepBtn}
             >
               −
@@ -192,29 +210,28 @@ export default function TripSummary({
               aria-live="polite"
               className="w-6 text-center text-[16px] text-ink"
             >
-              {guests}
+              {currentGuests}
             </span>
 
             <button
               type="button"
               aria-label="More guests"
               onClick={() =>
-                onGuestsChange(Math.min(property.guests, guests + 1))
+                onGuestsChange(Math.min(maxGuests, currentGuests + 1))
               }
-              disabled={guests >= property.guests}
+              disabled={currentGuests >= maxGuests}
               className={stepBtn}
             >
               +
             </button>
 
             <span className="text-[13px] text-body">
-              Max {property.guests}
+              Max {maxGuests}
             </span>
           </div>
         )}
       </div>
 
-      {/* Live availability status */}
       {pricingLoading && (
         <p
           role="status"
@@ -242,7 +259,6 @@ export default function TripSummary({
           </p>
         )}
 
-      {/* Server-generated price breakdown */}
       {showPrice && (
         <div className="mt-6 border-t border-gold/30 pt-6">
           <h3 className="text-[16px] font-semibold text-ink">
@@ -318,7 +334,6 @@ export default function TripSummary({
         </div>
       )}
 
-      {/* Submit */}
       {showSubmit && (
         <>
           <p className="mt-6 border-t border-gold/30 pt-6 text-[14px] leading-6 text-body">

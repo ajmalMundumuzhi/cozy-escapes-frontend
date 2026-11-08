@@ -5,12 +5,12 @@ import { clearAdminToken } from "../../services/adminApi";
 
 const links = [
   { to: "/admin/dashboard", label: "Dashboard", end: true },
-  { to: "/admin/properties", label: "Properties" },
-  { to: "/admin/bookings", label: "Bookings" },
-  { to: "/admin/availability", label: "Availability" },
-  { to: "/admin/pricing", label: "Pricing" },
+  // { to: "/admin/properties", label: "Properties" },
+  // { to: "/admin/bookings", label: "Bookings" },
+  // { to: "/admin/availability", label: "Availability" },
+  // { to: "/admin/pricing", label: "Pricing" },
   { to: "/admin/inquiries", label: "Inquiries" },
-  { to: "/admin/settings", label: "Settings" },
+  // { to: "/admin/settings", label: "Settings" },
 ];
 
 export default function AdminSidebar() {

@@ -8,19 +8,18 @@ import ExpandableText from '../components/property/ExpandableText'
 import AmenityList from '../components/property/AmenityList'
 import PropertyInfo from '../components/property/PropertyInfo'
 import BookingAva from '../components/property/BookingAva'
-import { usePropertyState } from '../hooks/useProperties'
+import { useGuestyPropertyState } from '../hooks/useGuestyProperties'
 
 export default function PropertyDetailPage() {
   const { id } = useParams()
   const { search } = useLocation()
-  const { property, loading, error } = usePropertyState(id)
 
-  // Start at the top when arriving from the listings page
+  const { property, loading, error } = useGuestyPropertyState(id)
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [id])
 
-  // Loading state
   if (loading) {
     return (
       <Container className="py-32 text-center">
@@ -29,7 +28,6 @@ export default function PropertyDetailPage() {
     )
   }
 
-  // Error or property not found
   if (error || !property) {
     return (
       <Container className="py-32 text-center">
@@ -69,7 +67,6 @@ export default function PropertyDetailPage() {
   return (
     <section className="pb-28 pt-8 md:pt-12 lg:pb-24">
       <Container>
-        {/* Breadcrumb */}
         <nav
           aria-label="Breadcrumb"
           className="text-[13px] text-body"
@@ -88,7 +85,6 @@ export default function PropertyDetailPage() {
           </Link>
         </nav>
 
-        {/* Title */}
         <div className="mt-6 mb-8">
           <h1 className="font-display text-4xl font-medium leading-tight tracking-tight text-ink md:text-5xl">
             {main.trim()}
@@ -104,7 +100,6 @@ export default function PropertyDetailPage() {
         <Gallery images={gallery} title={title} />
 
         <div className="mt-14 grid gap-14 lg:grid-cols-[1fr_380px] lg:gap-16">
-          {/* Left column */}
           <div className="min-w-0">
             <PropertyStats
               guests={guests}
@@ -143,10 +138,11 @@ export default function PropertyDetailPage() {
             </div>
           </div>
 
-          {/* Right column */}
           <BookingAva
             id={id}
-            rating={rating}
+            guests={guests}
+            bedrooms={bedrooms}
+            bathrooms={bathrooms}
             search={search}
           />
         </div>

@@ -49,7 +49,7 @@ export default function ListingsPage() {
       {/* Banner */}
       <section className="bg-navy text-white">
         <Container className="py-16 text-center md:py-24">
-          <p className="text-[12px] font-medium uppercase tracking-[0.3em] text-gold">Hotel Listings</p>
+          <p className="text-[12px] font-medium uppercase tracking-[0.3em] text-gold">Find Your Stay</p>
           <span className="mx-auto mt-6 block h-px w-16 bg-gold" />
           <h1 className="mt-8 font-display text-5xl font-medium tracking-tight md:text-6xl">
             Our Properties

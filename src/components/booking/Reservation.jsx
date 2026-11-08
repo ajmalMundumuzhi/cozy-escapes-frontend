@@ -7,7 +7,7 @@ import GuestDetailsForm from './GuestDetailsForm'
 import TripSummary from './TripSummary'
 import PaymentStep, { SecureNote } from './PaymentStep'
 
-import { useProperty } from '../../hooks/useProperties'
+import { useGuestyPropertyState } from '../../hooks/useGuestyProperties'
 import { parseISODate } from '../../utils/formatters'
 import { validateGuest } from '../../utils/validators'
 
@@ -60,9 +60,16 @@ function toApiDate(date) {
 
 export default function Reservation({ mode }) {
   const cfg = MODES[mode] || MODES.inquiry
+  const isInquiry = mode === 'inquiry'
+
   const { id } = useParams()
   const [params] = useSearchParams()
-  const property = useProperty(id)
+
+  const {
+    property,
+    loading: propertyLoading,
+    error: propertyError,
+  } = useGuestyPropertyState(id)
 
   const [values, setValues] = useState(initialValues)
   const [errors, setErrors] = useState({})
@@ -73,13 +80,7 @@ export default function Reservation({ mode }) {
   }))
 
   const [guests, setGuests] = useState(() =>
-    Math.max(
-      1,
-      Math.min(
-        Number(params.get('guests')) || 1,
-        property?.guests ?? 1
-      )
-    )
+    Math.max(1, Number(params.get('guests')) || 1)
   )
 
   const [marketing, setMarketing] = useState(false)
@@ -94,11 +95,28 @@ export default function Reservation({ mode }) {
 
   const [createdBooking, setCreatedBooking] = useState(null)
 
+  const summaryProperty = property || {
+    id,
+    title: 'Selected property',
+    image: '',
+    guests,
+    bedrooms: 0,
+    bathrooms: 0,
+    amenities: [],
+  }
+
+  const [mainTitle] = (property?.title || 'Selected property').split('|')
+
+  useEffect(() => {
+    if (!property?.guests) return
+
+    setGuests((current) => Math.min(current, property.guests))
+  }, [property?.guests])
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [stage, id])
 
-  // Check availability and get the server-calculated quote.
   useEffect(() => {
     if (mode !== 'booking' || !range.start || !range.end) {
       setAvailability(null)
@@ -144,6 +162,7 @@ export default function Reservation({ mode }) {
               'These dates are unavailable. Please select different dates.'
             )
           }
+
           return
         }
 
@@ -186,12 +205,25 @@ export default function Reservation({ mode }) {
     }
   }, [mode, id, range.start, range.end, guests])
 
-  if (!property) {
+  if (!isInquiry && propertyLoading) {
+    return (
+      <Container className="py-32 text-center">
+        <p className="text-body">Loading property details...</p>
+      </Container>
+    )
+  }
+
+  if (!isInquiry && (propertyError || !property)) {
     return (
       <Container className="py-32 text-center">
         <h1 className="font-display text-4xl text-ink">
           Property not found
         </h1>
+
+        <p className="mt-4 text-body">
+          {propertyError ||
+            'This listing doesn’t exist or may have been removed.'}
+        </p>
 
         <Link
           to="/accommodations"
@@ -204,7 +236,6 @@ export default function Reservation({ mode }) {
   }
 
   const back = `/accommodations/property/${id}`
-  const [mainTitle] = property.title.split('|')
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -224,12 +255,12 @@ export default function Reservation({ mode }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log("RESERVATION FORM SUBMITTED");
 
     if (submitting) return
 
     const validationErrors = validateGuest(values)
-    if (mode === 'inquiry') {
+
+    if (isInquiry) {
       delete validationErrors.address
       delete validationErrors.zip
     }
@@ -271,6 +302,7 @@ export default function Reservation({ mode }) {
         setQuoteError(
           'A valid quote for available dates is required to continue.'
         )
+
         return
       }
     }
@@ -282,6 +314,7 @@ export default function Reservation({ mode }) {
 
     const payload = {
       propertyId: id,
+      propertyTitle: property?.title || "Selected property",
       guest,
       checkin: range.start ? toApiDate(range.start) : null,
       checkout: range.end ? toApiDate(range.end) : null,
@@ -289,7 +322,7 @@ export default function Reservation({ mode }) {
       marketing,
     }
 
-    if (mode === 'inquiry') {
+    if (isInquiry) {
       setSubmitting(true)
 
       try {
@@ -307,7 +340,6 @@ export default function Reservation({ mode }) {
       return
     }
 
-    // Create a pending booking hold on the backend.
     setSubmitting(true)
 
     try {
@@ -418,10 +450,11 @@ export default function Reservation({ mode }) {
 
         <div className="space-y-6 lg:sticky lg:top-8 lg:self-start">
           <TripSummary
-            property={property}
+            property={summaryProperty}
             range={range}
             onRangeChange={(nextRange) => {
               setRange(nextRange)
+
               setErrors((current) => ({
                 ...current,
                 dates: undefined,

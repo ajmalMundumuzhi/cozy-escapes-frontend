@@ -1,8 +1,8 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import adminApi from "../../services/adminApi";
 import AdminSidebar from "../../components/admin/AdminSidebar";
+import useGuestyProperties from "../../hooks/useGuestyProperties";
 
 function StatCard({ title, value, detail }) {
   return (
@@ -24,6 +24,14 @@ export default function AdminDashboard() {
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+
+  // Guesty has its own loading/error state, so a Guesty problem never blanks the dashboard
+  const {
+    properties: guestyProperties,
+    loading: guestyLoading,
+    error: guestyError,
+    retry: retryGuesty,
+  } = useGuestyProperties();
 
   useEffect(() => {
     let active = true;
@@ -105,13 +113,17 @@ export default function AdminDashboard() {
               <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-4">
                 <StatCard
                   title="Total properties"
-                  value={data.properties?.total ?? 0}
-                  detail={`${data.properties?.active ?? 0} active listings`}
+                  value={guestyLoading ? "…" : guestyError ? "—" : guestyProperties.length}
+                  detail={
+                    guestyError
+                      ? "Couldn’t load properties from Guesty"
+                      : "Synced from Guesty"
+                  }
                 />
 
                 <StatCard
                   title="Total bookings"
-                  value={data.bookings?.total ?? 0}
+                  value={0}
                   detail={`${data.bookings?.pending ?? 0} pending`}
                 />
 
@@ -167,6 +179,123 @@ export default function AdminDashboard() {
               </section>
             </>
           )}
+
+          {/* Guesty properties */}
+          <section className="mt-5 rounded-xl border border-stone-200 bg-white p-4 shadow-sm sm:mt-6 sm:p-6">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="text-lg font-semibold text-[#17352B]">
+                  Guesty properties
+                </h2>
+                <p className="mt-1 text-xs text-stone-500">
+                  Synced from Guesty. Bookings and payments for these
+                  properties are managed in Guesty.
+                </p>
+              </div>
+
+              <Link
+                to="/accommodations"
+                className="text-sm font-medium text-[#8B6A32] transition-colors hover:text-[#17352B]"
+              >
+                View on website →
+              </Link>
+            </div>
+
+            {guestyLoading && (
+              <p className="mt-5 text-sm text-stone-600" role="status">
+                Loading Guesty properties...
+              </p>
+            )}
+
+            {guestyError && (
+              <div
+                role="alert"
+                className="mt-5 break-words rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+              >
+                <p>{guestyError}</p>
+                <button
+                  type="button"
+                  onClick={retryGuesty}
+                  className="mt-3 text-sm font-medium text-red-800 underline"
+                >
+                  Try again
+                </button>
+              </div>
+            )}
+
+            {!guestyLoading && !guestyError && (
+              <>
+                <div className="mt-5 rounded-lg bg-stone-50 p-4">
+                  <p className="text-sm text-stone-500">
+                    Properties in Guesty
+                  </p>
+                  <p className="mt-2 text-2xl font-bold text-[#17352B]">
+                    {guestyProperties.length}
+                  </p>
+                </div>
+
+                {guestyProperties.length === 0 ? (
+                  <p className="mt-5 text-sm text-stone-600">
+                    No properties were returned by Guesty.
+                  </p>
+                ) : (
+                  <ul className="mt-2 divide-y divide-stone-200">
+                    {guestyProperties.map((property) => {
+                      const basePrice = property.prices?.basePrice;
+
+                      return (
+                        <li
+                          key={property.id}
+                          className="flex flex-wrap items-center gap-4 py-4"
+                        >
+                          {property.image ? (
+                            <img
+                              src={property.image}
+                              alt=""
+                              className="h-16 w-24 shrink-0 rounded-md object-cover"
+                            />
+                          ) : (
+                            <div className="h-16 w-24 shrink-0 rounded-md bg-stone-200" />
+                          )}
+
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate font-medium text-[#17352B]">
+                              {property.nickname || property.title}
+                            </p>
+                            <p className="mt-1 truncate text-xs text-stone-500">
+                              {property.location || "Location not set"}
+                            </p>
+                            <p className="mt-1 text-xs text-stone-500">
+                              {property.guests} guests · {property.bedrooms}{" "}
+                              bedrooms · {property.bathrooms} bathrooms
+                            </p>
+                          </div>
+
+                          <div className="text-right">
+                            <p className="text-sm font-semibold text-[#17352B]">
+                              {basePrice
+                                ? money(basePrice, property.prices?.currency)
+                                : "—"}
+                            </p>
+                            <p className="text-xs text-stone-500">
+                              Base nightly rate
+                            </p>
+                          </div>
+
+                          <Link
+                            to={`/accommodations/property/${property.id}`}
+                            className="text-sm font-medium text-[#8B6A32] transition-colors hover:text-[#17352B]"
+                          >
+                            View →
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </>
+            )}
+          </section>
         </main>
       </div>
     </div>
