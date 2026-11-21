@@ -1,3 +1,4 @@
+
 const PROPERTY_TYPES = [
   'My entire vacation home (or condo)',
   'I have more than one property type',
@@ -33,7 +34,7 @@ const REVENUE_OPTIONS = [
 function SurveySelect({ label, name, value, options, onChange }) {
   return (
     <label className="block">
-      <span className="mb-3 block font-semibold text-[#333]">
+      <span className="mb-3 block font-semibold text-[#333333]">
         {label} <span className="text-red-500">*</span>
       </span>
 
@@ -42,7 +43,7 @@ function SurveySelect({ label, name, value, options, onChange }) {
         value={value}
         onChange={onChange}
         required
-        className="w-full rounded-sm border border-gray-300 bg-white px-4 py-3 text-[#444] outline-none focus:border-[#397e89]"
+        className="w-full rounded-sm border border-gray-300 bg-white px-4 py-3 text-[#333333] outline-none transition-colors focus:border-[#173B32] focus:ring-2 focus:ring-[#D9BD83]/40"
       >
         <option value="">Select an option</option>
         {options.map((option) => (

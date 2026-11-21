@@ -1,3 +1,4 @@
+
 import ReCAPTCHA from 'react-google-recaptcha'
 
 const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY
@@ -16,7 +17,7 @@ export default function AssessmentStepThree({
         ['Phone', 'phone', 'tel'],
       ].map(([label, name, type]) => (
         <label key={name} className="block">
-          <span className="mb-3 block font-semibold text-[#333]">
+          <span className="mb-3 block font-semibold text-[#333333]">
             {label} <span className="text-red-500">*</span>
           </span>
 
@@ -28,7 +29,7 @@ export default function AssessmentStepThree({
             onChange={onChange}
             placeholder={label}
             autoComplete={name}
-            className="w-full rounded-sm border border-gray-300 px-4 py-3 outline-none focus:border-[#397e89]"
+            className="w-full rounded-sm border border-gray-300 bg-white px-4 py-3 text-[#333333] outline-none transition-colors focus:border-[#173B32] focus:ring-2 focus:ring-[#D9BD83]/40"
           />
         </label>
       ))}

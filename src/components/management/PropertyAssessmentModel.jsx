@@ -1,3 +1,4 @@
+
 import { useState } from 'react'
 import AssessmentStepOne from './AssessmentStepOne'
 import AssessmentStepTwo from './AssessmentStepTwo'
@@ -103,7 +104,7 @@ export default function PropertyAssessmentModal({ onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-3 sm:p-6"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-[#153B30]/80 p-3 backdrop-blur-sm sm:p-6"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose()
       }}
@@ -112,43 +113,54 @@ export default function PropertyAssessmentModal({ onClose }) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="assessment-title"
-        className="relative max-h-[94vh] w-full max-w-5xl overflow-y-auto bg-white px-6 py-10 sm:px-12 sm:py-14"
+        className="relative max-h-[94vh] w-full max-w-5xl overflow-y-auto rounded-sm border border-[#D9B879]/40 bg-[#FFFFFF] px-6 py-10 shadow-2xl sm:px-12 sm:py-14"
       >
         <button
           type="button"
           onClick={onClose}
           aria-label="Close survey"
-          className="absolute right-5 top-4 text-3xl text-gray-700 hover:text-black"
+          className="absolute right-5 top-4 text-3xl text-[#153B30] transition-colors hover:text-[#D9B879]"
         >
           &times;
         </button>
 
         {submitted ? (
           <div className="py-16 text-center">
-            <h2 className="font-heading text-3xl text-[#397e89]">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-[#D9B879] bg-[#F5F3ED] text-3xl text-[#153B30]">
+              ✓
+            </div>
+
+            <h2 className="font-heading text-3xl text-[#153B30] sm:text-4xl">
               THANK YOU!
             </h2>
+
             <p className="mt-5 text-gray-600">
               Your property assessment request has been submitted
               successfully. Our team will contact you soon.
             </p>
+
             <button
+              type="button"
               onClick={onClose}
-              className="mt-8 bg-green-950 px-10 py-4 text-white"
+              className="mt-8 bg-[#153B30] px-10 py-4 font-medium uppercase tracking-wider text-white transition-colors hover:bg-[#245444]"
             >
               CLOSE
             </button>
           </div>
         ) : (
           <>
+            <div className="mb-3 text-center text-xs font-semibold uppercase tracking-[0.3em] text-[#B18D50]">
+              Avanta Living
+            </div>
+
             <h2
               id="assessment-title"
-              className="text-center font-heading text-3xl font-medium uppercase text-[#397e89] sm:text-5xl"
+              className="text-center font-heading text-3xl font-medium uppercase tracking-wide text-[#153B30] sm:text-5xl"
             >
               Complete Survey
             </h2>
 
-            <p className="mt-5 text-center text-gray-700 sm:text-xl">
+            <p className="mt-5 text-center text-gray-600 sm:text-xl">
               Hi, please take your time and fill out the survey form
             </p>
 
@@ -156,17 +168,22 @@ export default function PropertyAssessmentModal({ onClose }) {
               {[1, 2, 3].map((number) => (
                 <div key={number} className="flex flex-1 items-center">
                   <div
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border ${
+                    aria-current={step === number ? 'step' : undefined}
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-sm font-semibold transition-all duration-300 ${
                       step >= number
-                        ? 'border-[#efb9a8] bg-[#efb9a8] text-white'
-                        : 'border-gray-400 text-gray-700'
+                        ? 'border-[#153B30] bg-[#153B30] text-white'
+                        : 'border-[#D9B879] bg-[#F5F3ED] text-[#153B30]'
                     }`}
                   >
                     {number}
                   </div>
 
                   {number !== 3 && (
-                    <div className="mx-3 h-px flex-1 bg-gray-400" />
+                    <div
+                      className={`mx-3 h-[2px] flex-1 transition-colors duration-300 ${
+                        step > number ? 'bg-[#153B30]' : 'bg-[#D9B879]/50'
+                      }`}
+                    />
                   )}
                 </div>
               ))}
@@ -209,7 +226,7 @@ export default function PropertyAssessmentModal({ onClose }) {
                       setStep((previous) => previous - 1)
                       setError('')
                     }}
-                    className="flex-1 bg-[#efb9a8] py-4 font-medium uppercase text-white"
+                    className="flex-1 border border-[#153B30] bg-white py-4 font-medium uppercase tracking-wider text-[#153B30] transition-colors hover:bg-[#F5F3ED]"
                   >
                     Previous
                   </button>
@@ -219,7 +236,7 @@ export default function PropertyAssessmentModal({ onClose }) {
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="flex-1 bg-[#efb9a8] py-4 font-medium uppercase text-white"
+                    className="flex-1 bg-[#153B30] py-4 font-medium uppercase tracking-wider text-white transition-colors hover:bg-[#245444]"
                   >
                     Next
                   </button>
@@ -227,7 +244,7 @@ export default function PropertyAssessmentModal({ onClose }) {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 bg-[#efb9a8] py-4 font-medium uppercase text-white disabled:opacity-60"
+                    className="flex-1 bg-[#153B30] py-4 font-medium uppercase tracking-wider text-white transition-colors hover:bg-[#245444] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {loading ? 'Submitting...' : 'Send'}
                   </button>

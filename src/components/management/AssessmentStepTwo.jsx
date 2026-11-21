@@ -1,8 +1,9 @@
+
 export default function AssessmentStepTwo({ values, onChange }) {
   return (
     <div className="space-y-5">
       <label className="block">
-        <span className="mb-3 block font-semibold text-[#333]">
+        <span className="mb-3 block font-semibold text-[#333333]">
           How many bedrooms does your property have?
         </span>
 
@@ -15,12 +16,12 @@ export default function AssessmentStepTwo({ values, onChange }) {
           value={values.bedrooms}
           onChange={onChange}
           placeholder="Number of bedrooms"
-          className="w-full rounded-sm border border-gray-300 px-4 py-3 outline-none focus:border-[#397e89]"
+          className="w-full rounded-sm border border-gray-300 bg-white px-4 py-3 text-[#333333] outline-none transition-colors focus:border-[#173B32] focus:ring-2 focus:ring-[#D9BD83]/40"
         />
       </label>
 
       <label className="block">
-        <span className="mb-3 block font-semibold text-[#333]">
+        <span className="mb-3 block font-semibold text-[#333333]">
           Address
         </span>
 
@@ -31,7 +32,7 @@ export default function AssessmentStepTwo({ values, onChange }) {
           value={values.address}
           onChange={onChange}
           placeholder="Enter your property address"
-          className="w-full resize-y rounded-sm border border-gray-300 px-4 py-3 outline-none focus:border-[#397e89]"
+          className="w-full resize-y rounded-sm border border-gray-300 bg-white px-4 py-3 text-[#333333] outline-none transition-colors focus:border-[#173B32] focus:ring-2 focus:ring-[#D9BD83]/40"
         />
       </label>
     </div>
