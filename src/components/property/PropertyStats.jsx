@@ -59,7 +59,9 @@ export default function PropertyStats({
 
         <span className="text-[15px] text-ink">
           {hasReviews
-            ? `${Number(rating).toFixed(1)} rating (${plural(reviewCount, 'review')})`
+            ? `${Number.isInteger(Number(rating))
+                ? Number(rating)
+                : Number(rating).toFixed(1)} rating`
             : 'No reviews yet'}
         </span>
       </li>
