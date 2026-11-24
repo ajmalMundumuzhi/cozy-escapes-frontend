@@ -28,10 +28,29 @@ export default function PropertyStats({
   rating,
   reviewCount = 0,
 }) {
-  const hasReviews = reviewCount > 0 && rating !== null && Number.isFinite(Number(rating))
+  const hasReviews =
+    reviewCount > 0 &&
+    rating !== null &&
+    Number.isFinite(Number(rating))
 
   return (
     <ul className="grid grid-cols-2 gap-x-8 gap-y-5 border-y border-gold/40 py-6 sm:grid-cols-4">
+      <li className="flex items-center gap-3">
+        <svg
+          viewBox="0 0 24 24"
+          className="h-6 w-6 shrink-0 fill-gold"
+          aria-hidden="true"
+        >
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+        </svg>
+
+        <span className="text-[15px] text-ink">
+          {hasReviews
+            ? `${Number.isInteger(Number(rating)) ? Number(rating) : Number(rating).toFixed(1)} rating (${plural(reviewCount, 'review')})`
+            : 'No reviews yet'}
+        </span>
+      </li>
+
       <Item label={plural(guests, 'guest')}>
         <circle cx="12" cy="8" r="4" />
         <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
@@ -45,26 +64,6 @@ export default function PropertyStats({
       <Item label={plural(bathrooms, 'bathroom')}>
         <path d="M4 12h16v3a4 4 0 01-4 4H8a4 4 0 01-4-4v-3zM6 12V6a2 2 0 013.5-1.3M7 19l-1 2M17 19l1 2" />
       </Item>
-
-      <li className="flex items-center gap-3">
-        <svg
-          viewBox="0 0 24 24"
-          className={`h-6 w-6 shrink-0 ${hasReviews ? 'fill-gold' : 'fill-none stroke-gold-deep'}`}
-          stroke="currentColor"
-          strokeWidth="1.4"
-          aria-hidden="true"
-        >
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-        </svg>
-
-        <span className="text-[15px] text-ink">
-          {hasReviews
-            ? `${Number.isInteger(Number(rating))
-                ? Number(rating)
-                : Number(rating).toFixed(1)} rating`
-            : 'No reviews yet'}
-        </span>
-      </li>
     </ul>
   )
 }
