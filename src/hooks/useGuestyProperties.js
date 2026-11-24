@@ -62,7 +62,9 @@ function normalizeGuestyProperty(property) {
     image,
     images,
     amenities,
-    rating: Number.isFinite(rating) ? rating : null,
+    rating: Number.isFinite(rating)
+      ? Math.min(5, Math.max(0, rating > 5 ? rating / 2 : rating))
+      : null,
     reviewCount,
     reviews,
     guests: Number(property.guests) || 0,
