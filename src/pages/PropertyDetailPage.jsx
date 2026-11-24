@@ -52,6 +52,7 @@ export default function PropertyDetailPage() {
   const {
     title,
     rating,
+    reviewCount,
     guests,
     bedrooms,
     bathrooms,
@@ -106,6 +107,7 @@ export default function PropertyDetailPage() {
               bedrooms={bedrooms}
               bathrooms={bathrooms}
               rating={rating}
+              reviewCount={reviewCount}
             />
 
             <h2 className="mt-12 font-display text-3xl font-medium tracking-tight text-ink">

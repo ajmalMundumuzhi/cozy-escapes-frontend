@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react'
 import {
   getGuestyProperties,
@@ -20,6 +21,7 @@ function toParagraphs(publicDescription) {
 
 function normalizeGuestyProperty(property) {
   const id = String(property.id ?? property._id)
+  const reviews = property.reviews || {}
 
   const images = Array.isArray(property.images)
     ? property.images.map((image) => image.url).filter(Boolean)
@@ -31,17 +33,41 @@ function normalizeGuestyProperty(property) {
     ? property.amenities
     : []
 
+  const rawRating =
+    property.rating ??
+    reviews.avg ??
+    reviews.average ??
+    reviews.averageRating ??
+    reviews.averageScore ??
+    null
+
+  const rating =
+    rawRating !== null && rawRating !== ''
+      ? Number(rawRating)
+      : null
+
+  const rawReviewCount =
+    reviews.total ??
+    reviews.count ??
+    reviews.numberOfReviews ??
+    reviews.totalReviews ??
+    0
+
+  const reviewCount = Math.max(0, Number(rawReviewCount) || 0)
+
   return {
     ...property,
     id,
     title: property.title || 'Untitled property',
     image,
+    images,
     amenities,
-    rating: typeof property.rating === 'number' ? property.rating : null,
+    rating: Number.isFinite(rating) ? rating : null,
+    reviewCount,
+    reviews,
     guests: Number(property.guests) || 0,
     bedrooms: Number(property.bedrooms) || 0,
     bathrooms: Number(property.bathrooms) || 0,
-    // Suburb only, like the manual listings (e.g. "Lidcombe"), not the full unit address
     location: property.address?.city || property.location || null,
     description: toParagraphs(property.publicDescription),
     gallery: images.length > 0 ? images : image ? [image] : [],
@@ -49,7 +75,6 @@ function normalizeGuestyProperty(property) {
   }
 }
 
-// All Guesty properties (listing pages)
 export default function useGuestyProperties() {
   const [properties, setProperties] = useState([])
   const [loading, setLoading] = useState(true)
@@ -93,7 +118,6 @@ export default function useGuestyProperties() {
   return { properties, loading, error, retry }
 }
 
-// One Guesty property with loading and error states (same shape as usePropertyState)
 export function useGuestyPropertyState(id) {
   const [property, setProperty] = useState(null)
   const [loading, setLoading] = useState(true)
